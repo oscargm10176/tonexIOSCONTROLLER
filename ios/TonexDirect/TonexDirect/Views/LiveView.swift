@@ -15,10 +15,10 @@ struct LiveView: View {
             VStack(spacing: 14) {
                 HStack(spacing: 14) {
                     LivePresetButton(direction: -1)
-                        .frame(width: max(120, geo.size.width * 0.15))
+                        .frame(width: max(110, geo.size.width * 0.12))
                     presetDisplay(height: geo.size.height)
                     LivePresetButton(direction: +1)
-                        .frame(width: max(120, geo.size.width * 0.15))
+                        .frame(width: max(110, geo.size.width * 0.12))
                 }
                 .frame(maxHeight: .infinity)
 
@@ -31,7 +31,7 @@ struct LiveView: View {
             }
             .padding(16)
         }
-        .background(Color.black.ignoresSafeArea())
+        .background(LiveBackgroundView())
     }
 
     // MARK: Preset al centro
@@ -60,6 +60,7 @@ struct LiveView: View {
                     .multilineTextAlignment(.center)
                 Spacer(minLength: 0)
             }
+            .shadow(color: .black.opacity(0.7), radius: 10)   // se lee bien sobre la foto de fondo
             .id(store.currentPreset)
             .transition(.asymmetric(insertion: .scale(scale: 0.96).combined(with: .opacity),
                                     removal: .opacity))
@@ -104,28 +105,29 @@ struct LivePresetButton: View {
             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
             if direction < 0 { store.previousPreset() } else { store.nextPreset() }
         } label: {
-            VStack(spacing: 14) {
+            // Solo un círculo con la flecha y el preset destino; toda la columna sigue
+            // siendo tocable (útil en el escenario) pero ya no se ve un recuadro enorme.
+            VStack(spacing: 10) {
                 Image(systemName: direction < 0 ? "chevron.left" : "chevron.right")
-                    .font(.system(size: 54, weight: .bold))
+                    .font(.system(size: 30, weight: .bold))
+                    .frame(width: 72, height: 72)
+                    .background(Circle().fill(Color.black.opacity(0.45)))
+                    .overlay(Circle().stroke(Color.white.opacity(0.15)))
                 if let t = target {
                     Text(t.label)
-                        .font(.title2.weight(.heavy).monospacedDigit())
+                        .font(.headline.weight(.heavy).monospacedDigit())
                         .foregroundStyle(.secondary)
                     Text(t.name)
-                        .font(.callout.weight(.semibold))
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-                        .lineLimit(3)
+                        .lineLimit(2)
                         .minimumScaleFactor(0.7)
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, 4)
                 }
             }
+            .shadow(color: .black.opacity(0.6), radius: 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color(white: 0.11))
-                    .overlay(RoundedRectangle(cornerRadius: 24).stroke(Color.white.opacity(0.08)))
-            )
             .contentShape(Rectangle())
         }
         .buttonStyle(LivePressStyle())
@@ -164,7 +166,7 @@ struct LiveFootswitch: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(on ? Color(white: 0.2) : Color(white: 0.09))
+                    .fill((on ? Color(white: 0.2) : Color(white: 0.09)).opacity(0.85))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 20)

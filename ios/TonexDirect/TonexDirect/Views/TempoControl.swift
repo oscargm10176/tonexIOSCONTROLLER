@@ -183,7 +183,7 @@ struct LiveTapSwitch: View {
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(RoundedRectangle(cornerRadius: 20).fill(Color(white: 0.09)))
+            .background(RoundedRectangle(cornerRadius: 20).fill(Color(white: 0.09).opacity(0.85)))
             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.orange.opacity(0.5), lineWidth: 1))
             .contentShape(Rectangle())
         }

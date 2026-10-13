@@ -10,11 +10,12 @@ struct BlockPanel: View {
 
     /// Alto fijo de la zona de controles: el del bloque más alto (VIR / modulación / delay),
     /// para que al cambiar de bloque solo cambie el contenido y el panel no salte.
-    static let controlsHeight: CGFloat = 190
-    static let headerHeight: CGFloat = 44
+    /// (Compacto: las opciones de sync/modo van en la fila de arriba, así queda más espacio al amp.)
+    static let controlsHeight: CGFloat = 100
+    static let headerHeight: CGFloat = 38
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
                 if let i = block.enableIndex {
                     StompSwitch(index: i)
@@ -23,10 +24,8 @@ struct BlockPanel: View {
                     PrePostChip(index: p)
                 }
                 modelPicker
+                headerExtras
                 Spacer(minLength: 8)
-                Text(block.title)
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
                 Button {
                     store.focus(block.editorSection)
                 } label: {
@@ -40,11 +39,14 @@ struct BlockPanel: View {
 
             controls
                 .frame(maxWidth: .infinity)
-                .frame(height: Self.controlsHeight, alignment: .center)
+                // el gabinete VIR tiene dos filas: ese caso puede crecer
+                .frame(minHeight: Self.controlsHeight, alignment: .center)
+                .fixedSize(horizontal: false, vertical: true)
                 .opacity(store.isBlockOn(block) ? 1 : 0.45)
                 .animation(.easeInOut(duration: 0.15), value: store.isBlockOn(block))
         }
-        .padding(16)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 18)
@@ -77,6 +79,31 @@ struct BlockPanel: View {
         }
     }
 
+    /// Sync al tempo, subdivisión e interruptores del bloque (modo del delay…), en la fila de arriba.
+    @ViewBuilder
+    private var headerExtras: some View {
+        switch block {
+        case .mod:
+            syncControls(TonexCatalog.modulationParams(model: model(TonexParam.modModel)))
+        case .delay:
+            syncControls(TonexCatalog.delayParams(model: model(TonexParam.delayModel)))
+        default:
+            EmptyView()
+        }
+    }
+
+    private func syncControls(_ b: (sync: Int, subdivision: Int, params: [ParamSpec])) -> some View {
+        HStack(spacing: 8) {
+            ToggleChip(index: b.sync, label: "Sync", systemImage: "metronome")
+            ForEach(b.params.filter { if case .toggle = $0.kind { return true } else { return false } }, id: \.index) { spec in
+                ToggleChip(index: spec.index, label: spec.label, systemImage: "switch.2")
+            }
+            if store.isOn(b.sync) {
+                SubdivisionStepper(index: b.subdivision)
+            }
+        }
+    }
+
     // MARK: Perillas
 
     @ViewBuilder
@@ -93,9 +120,9 @@ struct BlockPanel: View {
         case .eq:
             KnobRow(specs: TonexCatalog.eq)
         case .mod:
-            timeBased(TonexCatalog.modulationParams(model: model(TonexParam.modModel)))
+            KnobRow(specs: TonexCatalog.modulationParams(model: model(TonexParam.modModel)).params)
         case .delay:
-            timeBased(TonexCatalog.delayParams(model: model(TonexParam.delayModel)))
+            KnobRow(specs: TonexCatalog.delayParams(model: model(TonexParam.delayModel)).params)
         case .reverb:
             KnobRow(specs: TonexCatalog.reverbParams(model: model(TonexParam.reverbModel)))
         }
@@ -106,7 +133,7 @@ struct BlockPanel: View {
     private var cabControls: some View {
         switch model(TonexParam.cabType) {
         case 1:
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 12) {
                     SubdivisionStepper(index: TonexParam.virCabModel, title: "Gabinete VIR")
                     Divider().frame(height: 24)
@@ -128,29 +155,12 @@ struct BlockPanel: View {
             Label("Sin gabinete: la salida va directa (para usar un IR o un gabinete real).", systemImage: "speaker.slash")
                 .font(.callout)
                 .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, minHeight: 80)
+                .frame(maxWidth: .infinity, minHeight: 60)
         default:
             Label("Usando el gabinete capturado con el Tone Model.", systemImage: "lock")
                 .font(.callout)
                 .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, minHeight: 80)
-        }
-    }
-
-    /// Modulación y delay: perillas + sync al tempo (+ interruptores del bloque, como el modo del delay).
-    private func timeBased(_ b: (sync: Int, subdivision: Int, params: [ParamSpec])) -> some View {
-        VStack(spacing: 12) {
-            KnobRow(specs: b.params)
-            HStack(spacing: 10) {
-                ToggleChip(index: b.sync, label: "Sync al tempo", systemImage: "metronome")
-                ForEach(b.params.filter { if case .toggle = $0.kind { return true } else { return false } }, id: \.index) { spec in
-                    ToggleChip(index: spec.index, label: spec.label, systemImage: "switch.2")
-                }
-                if store.isOn(b.sync) {
-                    SubdivisionStepper(index: b.subdivision)
-                }
-                Spacer()
-            }
+                .frame(maxWidth: .infinity, minHeight: 60)
         }
     }
 
@@ -236,11 +246,11 @@ struct KnobRow: View {
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            row(size: 76)
             row(size: 62)
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 14) {
+            row(size: 52)
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 10) {
                 ForEach(knobs, id: \.spec.index) { k in
-                    Knob(index: k.spec.index, label: k.spec.label, unit: k.unit, decimals: k.decimals, size: 62)
+                    Knob(index: k.spec.index, label: k.spec.label, unit: k.unit, decimals: k.decimals, size: 52)
                 }
             }
         }
@@ -248,7 +258,7 @@ struct KnobRow: View {
     }
 
     private func row(size: CGFloat) -> some View {
-        HStack(spacing: 18) {
+        HStack(spacing: 22) {
             ForEach(knobs, id: \.spec.index) { k in
                 Knob(index: k.spec.index, label: k.spec.label, unit: k.unit, decimals: k.decimals, size: size)
             }
@@ -277,7 +287,7 @@ struct StompSwitch: View {
                     .frame(minWidth: 34)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.vertical, 7)
             .background(Capsule().fill(Color(white: on ? 0.2 : 0.12)))
             .overlay(Capsule().stroke(Color.white.opacity(0.1)))
         }

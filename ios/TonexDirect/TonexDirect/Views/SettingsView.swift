@@ -28,6 +28,10 @@ struct SettingsView: View {
                     Text("Conecta el Tonex Pedal al puerto USB-C del iPad (cable USB-C a USB-B, o adaptador). La primera vez, activa el driver en Ajustes › General › Drivers.")
                 }
 
+                FootPedalSection()
+
+                LiveBackgroundSettings()
+
                 Section {
                     Button("Abrir los ajustes de la app") {
                         if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }

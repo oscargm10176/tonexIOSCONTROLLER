@@ -7,20 +7,28 @@ struct EditView: View {
     @Environment(ControllerStore.self) private var store
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 14) {
-                if store.state == .ready {
-                    BlockBar()
-                    BlockPanel(block: store.stageBlock)
-                        .animation(.snappy, value: store.stageBlock)
+        GeometryReader { geo in
+            // La imagen del amp ocupa lo que sobra: alto total − barra de bloques − panel
+            // de perillas − nombre del preset y márgenes.
+            let reserved: CGFloat = store.state == .ready ? 400 : 170
+            let imageHeight = min(560, max(200, geo.size.height - reserved))
+            ScrollView {
+                VStack(spacing: 12) {
+                    if store.state == .ready {
+                        BlockBar()
+                        BlockPanel(block: store.stageBlock)
+                            .animation(.snappy, value: store.stageBlock)
+                    }
+                    PresetHeroCard(showChain: false, showPresetArrows: true,
+                                   imageMaxHeight: imageHeight,
+                                   labelSize: imageHeight > 380 ? 72 : 60)
                 }
-                PresetHeroCard(showChain: false, showPresetArrows: true)
+                .padding(16)
+                .frame(maxWidth: 1400)
+                .frame(maxWidth: .infinity)
             }
-            .padding(16)
-            .frame(maxWidth: 1200)
-            .frame(maxWidth: .infinity)
+            .scrollBounceBehavior(.basedOnSize)
         }
-        .scrollBounceBehavior(.basedOnSize)
     }
 }
 

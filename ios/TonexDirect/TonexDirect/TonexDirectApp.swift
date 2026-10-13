@@ -4,15 +4,21 @@ import UIKit
 @main
 struct TonexDirectApp: App {
     @State private var store = ControllerStore()
+    /// Pedal de pie Bluetooth/USB MIDI (iRig BlueBoard, etc.).
+    @State private var foot = FootController()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(store)
+                .environment(foot)
                 .preferredColorScheme(.dark)
                 .tint(.orange)
-                .onAppear { store.connect() }
+                .onAppear {
+                    store.connect()
+                    foot.attach(store)
+                }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { store.resume() }

@@ -108,6 +108,10 @@ struct PresetHeroCard: View {
     var showChain = true
     /// Flechas de preset anterior/siguiente junto al nombre.
     var showPresetArrows = false
+    /// Alto máximo de la imagen del amp (Editar lo calcula con el espacio que sobra).
+    var imageMaxHeight: CGFloat = 340
+    /// Tamaño del número de preset; el nombre va proporcional.
+    var labelSize: CGFloat = 52
 
     var body: some View {
         let shown = store.currentPreset.flatMap { store.displaySkin(for: $0) }
@@ -122,7 +126,8 @@ struct PresetHeroCard: View {
                             .resizable()
                             .interpolation(.high)
                             .scaledToFit()
-                            .frame(maxWidth: skin.isPedal ? 340 : 980, maxHeight: skin.isPedal ? 300 : 340)
+                            .frame(maxWidth: skin.isPedal ? imageMaxHeight : 1400,
+                                   maxHeight: skin.isPedal ? imageMaxHeight * 0.88 : imageMaxHeight)
                             .shadow(color: .black.opacity(0.6), radius: 12, y: 6)
                             .id(skin.asset)
                             .transition(.opacity)
@@ -146,7 +151,7 @@ struct PresetHeroCard: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        .frame(maxWidth: 980, minHeight: 220)
+                        .frame(maxWidth: 980, minHeight: min(220, imageMaxHeight))
                         .background(
                             RoundedRectangle(cornerRadius: 16)
                                 .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
@@ -164,11 +169,11 @@ struct PresetHeroCard: View {
             HStack(alignment: .firstTextBaseline, spacing: 14) {
                 if showPresetArrows { presetArrow("chevron.left") { store.previousPreset() } }
                 Text(store.currentPresetInfo?.label ?? "–")
-                    .font(.system(size: 52, weight: .heavy, design: .rounded))
+                    .font(.system(size: labelSize, weight: .heavy, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText())
                 Text(store.currentPresetInfo?.name ?? "Sin preset")
-                    .font(.title.weight(.semibold))
+                    .font(.system(size: labelSize * 0.62, weight: .bold))
                     .lineLimit(2)
                     .minimumScaleFactor(0.6)
                 if showPresetArrows { presetArrow("chevron.right") { store.nextPreset() } }
