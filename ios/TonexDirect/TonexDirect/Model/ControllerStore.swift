@@ -51,6 +51,10 @@ final class ControllerStore {
     private(set) var currentPreset: Int?
     private(set) var params: [Int: ParamValue] = [:]
 
+    /// Sección visible en la columna derecha y bloque al que saltar desde la cadena de efectos.
+    var section: AppSection = .stage
+    var focusedBlock: EffectBlock?
+
     /// Registro de diagnóstico visible en Ajustes (últimas 300 líneas).
     private(set) var diagnostics: [String] = []
     /// Bytes y tramas recibidas en la conexión actual.
@@ -107,6 +111,24 @@ final class ControllerStore {
     }
 
     func clearDiagnostics() { diagnostics.removeAll() }
+
+    // MARK: Nombres guardados (la lista aparece al instante y se actualiza al sincronizar)
+
+    private static let namesKey = "presetNames.tonexPedal"
+
+    private func saveNameCache() {
+        UserDefaults.standard.set(presets.map(\.name), forKey: Self.namesKey)
+    }
+
+    private static func loadNameCache() -> [String] {
+        UserDefaults.standard.stringArray(forKey: namesKey) ?? []
+    }
+
+    /// Ir a un bloque de efectos (desde la cadena).
+    func focus(_ block: EffectBlock) {
+        focusedBlock = block
+        section = .effects
+    }
 
     // MARK: Imagen de amp por preset (se guarda en el iPad, como SkinConfig en el ESP32)
 
@@ -256,7 +278,11 @@ final class ControllerStore {
         maxPresets = TonexPedal.maxPresets
         startPreset = 1
         if presets.count != maxPresets {
-            presets = (0..<maxPresets).map { Preset(id: $0, number: $0 + startPreset, name: "Preset \($0 + startPreset)") }
+            let cached = Self.loadNameCache()
+            presets = (0..<maxPresets).map { i in
+                let name = cached.indices.contains(i) && !cached[i].isEmpty ? cached[i] : "Preset \(i + startPreset)"
+                return Preset(id: i, number: i + startPreset, name: name)
+            }
         }
         params = TonexParamTable.defaults()
         globalConfig = nil
@@ -330,6 +356,7 @@ final class ControllerStore {
 
     private func finishSync() {
         note("Sincronización completa")
+        saveNameCache()
         phase = .ready
         state = .ready
         UIApplication.shared.isIdleTimerDisabled = true   // pantalla encendida en escenario
@@ -405,7 +432,10 @@ final class ControllerStore {
         lastDetailsAt = Date()
         if let i = details.presetIndex, i < maxPresets { currentPreset = i }
         if let name = details.name, !name.isEmpty, let c = currentPreset, presets.indices.contains(c) {
-            presets[c].name = name
+            if presets[c].name != name {
+                presets[c].name = name
+                if phase == .ready { saveNameCache() }
+            }
         }
         for (i, v) in details.params.enumerated() { setFromPedal(i, Double(v)) }
     }

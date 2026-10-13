@@ -5,10 +5,14 @@ struct EffectsView: View {
     @Environment(ControllerStore.self) private var store
 
     var body: some View {
-        NavigationStack {
+        Group {
             Group {
                 if store.state == .ready, !store.params.isEmpty {
-                    form
+                    ScrollViewReader { proxy in
+                        form
+                            .onAppear { scroll(proxy, animated: false) }
+                            .onChange(of: store.focusedBlock) { _, _ in scroll(proxy, animated: true) }
+                    }
                 } else {
                     ContentUnavailableView(
                         "Sin datos del pedal",
@@ -47,6 +51,7 @@ struct EffectsView: View {
             } header: {
                 EffectHeader(title: "Amplificador", enableIndex: TonexParam.ampEnable)
             }
+            .id(EffectBlock.amp)
 
             if cabType == 1 {
                 Section("Gabinete VIR") {
@@ -61,6 +66,7 @@ struct EffectsView: View {
             } header: {
                 EffectHeader(title: "Noise gate", enableIndex: TonexParam.gateEnable)
             }
+            .id(EffectBlock.gate)
 
             // Compresor
             Section {
@@ -69,6 +75,7 @@ struct EffectsView: View {
             } header: {
                 EffectHeader(title: "Compresor", enableIndex: TonexParam.compEnable)
             }
+            .id(EffectBlock.comp)
 
             // EQ
             Section {
@@ -77,6 +84,7 @@ struct EffectsView: View {
             } header: {
                 EffectHeader(title: "EQ", enableIndex: nil)
             }
+            .id(EffectBlock.eq)
 
             // Modulación
             Section {
@@ -86,6 +94,7 @@ struct EffectsView: View {
             } header: {
                 EffectHeader(title: "Modulación", enableIndex: TonexParam.modEnable)
             }
+            .id(EffectBlock.mod)
 
             // Delay
             Section {
@@ -95,6 +104,7 @@ struct EffectsView: View {
             } header: {
                 EffectHeader(title: "Delay", enableIndex: TonexParam.delayEnable)
             }
+            .id(EffectBlock.delay)
 
             // Reverb
             Section {
@@ -104,6 +114,16 @@ struct EffectsView: View {
             } header: {
                 EffectHeader(title: "Reverb", enableIndex: TonexParam.reverbEnable)
             }
+            .id(EffectBlock.reverb)
+        }
+    }
+
+    private func scroll(_ proxy: ScrollViewProxy, animated: Bool) {
+        guard let block = store.focusedBlock else { return }
+        if animated {
+            withAnimation(.snappy) { proxy.scrollTo(block, anchor: .top) }
+        } else {
+            proxy.scrollTo(block, anchor: .top)
         }
     }
 

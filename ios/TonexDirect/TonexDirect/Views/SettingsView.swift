@@ -6,7 +6,7 @@ struct SettingsView: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        NavigationStack {
+        Group {
             Form {
                 Section {
                     LabeledContent("Estado", value: store.state.label)

@@ -66,6 +66,11 @@ enum TonexParamTable {
         (440, 415, 465, "TUNEREF"), (0, 0, 1, "BYPASS"), (0, -40, 3, "MVOL"), (0, 0, 1, "DIRMON"),
     ]
 
+    /// Valor por defecto de un parámetro (para "doble toque = restablecer").
+    static func defaultValue(_ index: Int) -> Double? {
+        rows.indices.contains(index) && index != TonexParam.paramLast ? rows[index].0 : nil
+    }
+
     /// Diccionario inicial (valores por defecto) sin la entrada LAST.
     static func defaults() -> [Int: ParamValue] {
         assert(rows.count == TonexParam.globalLast, "La tabla debe tener \(TonexParam.globalLast) filas")

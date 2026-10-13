@@ -66,7 +66,7 @@ struct PresetHeroCard: View {
                         .resizable()
                         .interpolation(.high)
                         .scaledToFit()
-                        .frame(maxWidth: skin.isPedal ? 220 : 540, maxHeight: 180)
+                        .frame(maxWidth: skin.isPedal ? 260 : 620, maxHeight: 210)
                         .shadow(color: .black.opacity(0.6), radius: 12, y: 6)
                         .id(skin.asset)
                         .transition(.opacity)
@@ -173,84 +173,139 @@ struct SkinPickerSheet: View {
 
 // MARK: - Cadena de efectos
 
+/// Bloques de la cadena del Tonex.
+enum EffectBlock: String, CaseIterable, Hashable {
+    case gate, comp, mod, delay, eq, amp, cab, reverb
+
+    var title: String {
+        switch self {
+        case .gate: return "Noise gate"
+        case .comp: return "Compresor"
+        case .mod: return "Modulación"
+        case .delay: return "Delay"
+        case .eq: return "EQ"
+        case .amp: return "Amplificador"
+        case .cab: return "Gabinete"
+        case .reverb: return "Reverb"
+        }
+    }
+
+    /// Parámetro de encendido (nil si el bloque no se puede apagar desde aquí).
+    var enableIndex: Int? {
+        switch self {
+        case .gate: return TonexParam.gateEnable
+        case .comp: return TonexParam.compEnable
+        case .mod: return TonexParam.modEnable
+        case .delay: return TonexParam.delayEnable
+        case .amp: return TonexParam.ampEnable
+        case .reverb: return TonexParam.reverbEnable
+        case .eq, .cab: return nil
+        }
+    }
+
+    /// Sección de la pestaña Efectos donde se edita (el gabinete está dentro de Amplificador).
+    var editorSection: EffectBlock { self == .cab ? .amp : self }
+}
+
 /// Iconos de la cadena en el orden real (pre/post), como `setEffectIcons()` de la web del firmware.
+/// Toque: abre el bloque en Efectos. Toque largo: lo enciende/apaga.
 struct EffectsChainView: View {
     @Environment(ControllerStore.self) private var store
+    var iconSize: CGFloat = 48
 
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(Array(chain.enumerated()), id: \.offset) { i, icon in
+        HStack(spacing: 6) {
+            ForEach(Array(chain.enumerated()), id: \.offset) { i, block in
                 if i > 0 {
                     Image(systemName: "chevron.compact.right")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
-                Image(icon)
+                Image(icon(for: block))
                     .resizable()
                     .interpolation(.high)
-                    .frame(width: 44, height: 44)
+                    .frame(width: iconSize, height: iconSize)
+                    .padding(3)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(store.focusedBlock == block.editorSection && store.section == .effects
+                                  ? Color.orange.opacity(0.25) : Color.clear)
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        UISelectionFeedbackGenerator().selectionChanged()
+                        store.focus(block.editorSection)
+                    }
+                    .onLongPressGesture(minimumDuration: 0.4) {
+                        guard let i = block.enableIndex, store.state == .ready else { return }
+                        UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+                        store.setToggle(i, !store.isOn(i))
+                    }
+                    .accessibilityElement()
+                    .accessibilityLabel(block.title)
+                    .accessibilityValue(block.enableIndex.map { store.isOn($0) ? "Encendido" : "Apagado" } ?? "")
+                    .accessibilityHint("Toca para editar. Mantén presionado para encender o apagar.")
+                    .accessibilityAddTraits(.isButton)
             }
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Cadena de efectos")
+        .animation(.snappy, value: chain)
     }
 
-    private var chain: [String] {
+    private var chain: [EffectBlock] {
         let s = store
         let gatePost = s.isOn(TonexParam.gatePost), compPost = s.isOn(TonexParam.compPost)
         let modPost = s.isOn(TonexParam.modPost), delayPost = s.isOn(TonexParam.delayPost)
         let eqPost = s.isOn(TonexParam.eqPost), reverbPost = s.isOn(TonexParam.reverbPosition)
 
-        var out: [String] = []
-        if !gatePost { out.append(gate) }
-        if !compPost { out.append(comp) }
-        if !modPost { out.append(mod) }
-        if !delayPost { out.append(delay) }
-        if !eqPost { out.append("effect_icon_eq") }
-        out.append(amp)
-        out.append(cab)
-        if eqPost { out.append("effect_icon_eq") }
-        if gatePost { out.append(gate) }
-        if compPost { out.append(comp) }
-        if !reverbPost { out.append(reverb) }
-        if modPost { out.append(mod) }
-        if delayPost { out.append(delay) }
-        if reverbPost { out.append(reverb) }
+        var out: [EffectBlock] = []
+        if !gatePost { out.append(.gate) }
+        if !compPost { out.append(.comp) }
+        if !modPost { out.append(.mod) }
+        if !delayPost { out.append(.delay) }
+        if !eqPost { out.append(.eq) }
+        out.append(.amp)
+        out.append(.cab)
+        if eqPost { out.append(.eq) }
+        if gatePost { out.append(.gate) }
+        if compPost { out.append(.comp) }
+        if !reverbPost { out.append(.reverb) }
+        if modPost { out.append(.mod) }
+        if delayPost { out.append(.delay) }
+        if reverbPost { out.append(.reverb) }
         return out
     }
 
     private func model(_ i: Int) -> Int { Int(store.value(i).rounded()) }
 
-    private var gate: String { store.isOn(TonexParam.gateEnable) ? "effect_icon_gate_on" : "effect_icon_gate_off" }
-    private var comp: String { store.isOn(TonexParam.compEnable) ? "effect_icon_comp_on" : "effect_icon_comp_off" }
-    private var amp: String { store.isOn(TonexParam.ampEnable) ? "effect_icon_amp_on" : "effect_icon_amp_off" }
-    private var cab: String { model(TonexParam.cabType) == 2 ? "effect_icon_cab_off" : "effect_icon_cab_on" }
-
-    private var mod: String {
-        guard store.isOn(TonexParam.modEnable) else { return "effect_icon_mod_off" }
-        switch model(TonexParam.modModel) {
-        case 1: return "effect_icon_mod_on_tremolo"
-        case 2: return "effect_icon_mod_on_phaser"
-        case 3: return "effect_icon_mod_on_flanger"
-        case 4: return "effect_icon_mod_on_rotary"
-        default: return "effect_icon_mod_on_chorus"
-        }
-    }
-
-    private var delay: String {
-        guard store.isOn(TonexParam.delayEnable) else { return "effect_icon_delay_off" }
-        return model(TonexParam.delayModel) == 1 ? "effect_icon_delay_on_t" : "effect_icon_delay_on_d"
-    }
-
-    private var reverb: String {
-        guard store.isOn(TonexParam.reverbEnable) else { return "effect_icon_reverb_off" }
-        switch model(TonexParam.reverbModel) {
-        case 1: return "effect_icon_reverb_on_s2"
-        case 2: return "effect_icon_reverb_on_s3"
-        case 3: return "effect_icon_reverb_on_s4"
-        case 4: return "effect_icon_reverb_on_r"
-        case 5: return "effect_icon_reverb_on_p"
-        default: return "effect_icon_reverb_on_s1"
+    private func icon(for block: EffectBlock) -> String {
+        switch block {
+        case .gate: return store.isOn(TonexParam.gateEnable) ? "effect_icon_gate_on" : "effect_icon_gate_off"
+        case .comp: return store.isOn(TonexParam.compEnable) ? "effect_icon_comp_on" : "effect_icon_comp_off"
+        case .amp: return store.isOn(TonexParam.ampEnable) ? "effect_icon_amp_on" : "effect_icon_amp_off"
+        case .cab: return model(TonexParam.cabType) == 2 ? "effect_icon_cab_off" : "effect_icon_cab_on"
+        case .eq: return "effect_icon_eq"
+        case .mod:
+            guard store.isOn(TonexParam.modEnable) else { return "effect_icon_mod_off" }
+            switch model(TonexParam.modModel) {
+            case 1: return "effect_icon_mod_on_tremolo"
+            case 2: return "effect_icon_mod_on_phaser"
+            case 3: return "effect_icon_mod_on_flanger"
+            case 4: return "effect_icon_mod_on_rotary"
+            default: return "effect_icon_mod_on_chorus"
+            }
+        case .delay:
+            guard store.isOn(TonexParam.delayEnable) else { return "effect_icon_delay_off" }
+            return model(TonexParam.delayModel) == 1 ? "effect_icon_delay_on_t" : "effect_icon_delay_on_d"
+        case .reverb:
+            guard store.isOn(TonexParam.reverbEnable) else { return "effect_icon_reverb_off" }
+            switch model(TonexParam.reverbModel) {
+            case 1: return "effect_icon_reverb_on_s2"
+            case 2: return "effect_icon_reverb_on_s3"
+            case 3: return "effect_icon_reverb_on_s4"
+            case 4: return "effect_icon_reverb_on_r"
+            case 5: return "effect_icon_reverb_on_p"
+            default: return "effect_icon_reverb_on_s1"
+            }
         }
     }
 }

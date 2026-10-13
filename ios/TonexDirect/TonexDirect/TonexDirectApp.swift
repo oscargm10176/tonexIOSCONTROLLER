@@ -20,26 +20,6 @@ struct TonexDirectApp: App {
     }
 }
 
-struct ContentView: View {
-    @Environment(ControllerStore.self) private var store
-
-    var body: some View {
-        VStack(spacing: 0) {
-            if store.state != .ready {
-                ConnectionBanner()
-            }
-            TabView {
-                StageView()
-                    .tabItem { Label("Escenario", systemImage: "music.note.list") }
-                EffectsView()
-                    .tabItem { Label("Efectos", systemImage: "slider.horizontal.3") }
-                SettingsView()
-                    .tabItem { Label("Ajustes", systemImage: "gearshape") }
-            }
-        }
-    }
-}
-
 struct ConnectionBanner: View {
     @Environment(ControllerStore.self) private var store
     @Environment(\.openURL) private var openURL
