@@ -52,20 +52,30 @@ struct TempoBeat: View {
 struct TempoBar: View {
     @Environment(ControllerStore.self) private var store
     @State private var tapper = TapTempo()
+    @State private var typing = false
 
     var body: some View {
         HStack(spacing: 8) {
             TempoBeat(bpm: store.bpm, size: 9)
-            HStack(alignment: .firstTextBaseline, spacing: 3) {
-                Text("\(store.bpm)")
-                    .font(.headline.weight(.bold).monospacedDigit())
-                    .contentTransition(.numericText())
-                    .animation(.snappy, value: store.bpm)
-                Text("BPM")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary)
+            // Toca el número para escribir el BPM exacto.
+            Button { typing = true } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 3) {
+                    Text("\(store.bpm)")
+                        .font(.headline.weight(.bold).monospacedDigit())
+                        .contentTransition(.numericText())
+                        .animation(.snappy, value: store.bpm)
+                    Text("BPM")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .frame(minWidth: 62, alignment: .leading)
+                .contentShape(Rectangle())
             }
-            .frame(minWidth: 62, alignment: .leading)
+            .buttonStyle(.plain)
+            .accessibilityHint("Toca para escribir el tempo")
+            .popover(isPresented: $typing, arrowEdge: .bottom) {
+                BPMInput(initial: store.bpm) { store.setBPM(Double($0)) }
+            }
 
             stepButton("minus", -1)
             stepButton("plus", +1)
@@ -99,6 +109,58 @@ struct TempoBar: View {
         .buttonStyle(.bordered)
         .buttonRepeatBehavior(.enabled)   // mantener presionado = sube/baja seguido
         .accessibilityLabel(delta < 0 ? "Bajar tempo" : "Subir tempo")
+    }
+}
+
+/// Campo para escribir el BPM: se abre con el teclado numérico listo.
+struct BPMInput: View {
+    @Environment(\.dismiss) private var dismiss
+    let initial: Int
+    let onSet: (Int) -> Void
+    @State private var text = ""
+    @FocusState private var focused: Bool
+
+    private var value: Int? { Int(text) }
+    private var valid: Bool { (value ?? 0) >= 40 && (value ?? 0) <= 240 }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Tempo")
+                .font(.headline)
+            HStack(spacing: 8) {
+                TextField("\(initial)", text: $text)
+                    .keyboardType(.numberPad)
+                    .font(.title.weight(.bold).monospacedDigit())
+                    .multilineTextAlignment(.center)
+                    .frame(width: 110)
+                    .padding(.vertical, 6)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Color(white: 0.15)))
+                    .focused($focused)
+                    .onChange(of: text) { _, new in
+                        let digits = String(new.filter(\.isNumber).prefix(3))
+                        if digits != new { text = digits }
+                    }
+                    .onSubmit(apply)
+                Text("BPM").foregroundStyle(.secondary)
+            }
+            Text("Entre 40 y 240")
+                .font(.caption)
+                .foregroundStyle(valid || text.isEmpty ? Color.secondary : Color.red)
+            Button("Aplicar", action: apply)
+                .buttonStyle(.borderedProminent)
+                .tint(.orange)
+                .frame(maxWidth: .infinity)
+                .disabled(!valid)
+        }
+        .padding(18)
+        .frame(width: 220)
+        .onAppear { text = "\(initial)"; focused = true }
+    }
+
+    private func apply() {
+        guard valid, let v = value else { return }
+        onSet(v)
+        dismiss()
     }
 }
 

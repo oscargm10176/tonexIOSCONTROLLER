@@ -38,7 +38,7 @@ struct LoadingView: View {
                     .frame(height: 80)
 
                 VStack(spacing: 10) {
-                    Text("TonexDirect")
+                    Text("TONE")
                         .font(.system(size: 40, weight: .bold, design: .rounded))
                     Text(title)
                         .font(.title3.weight(.semibold))

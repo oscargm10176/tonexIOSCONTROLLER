@@ -75,7 +75,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Preset completo (investigación)")
                 } footer: {
-                    Text("Solo lee del pedal, no cambia nada. Descarga dos presets que solo difieran en el amp y compártelos (AirDrop a la Mac o Guardar en Archivos). También aparecen en Archivos › En mi iPad › TonexDirect › PresetDumps.")
+                    Text("Solo lee del pedal, no cambia nada. Descarga dos presets que solo difieran en el amp y compártelos (AirDrop a la Mac o Guardar en Archivos). También aparecen en Archivos › En mi iPad › TONE › PresetDumps.")
                 }
 
                 Section {
