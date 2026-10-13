@@ -6,6 +6,7 @@ struct SettingsView: View {
     @Environment(\.openURL) private var openURL
     @State private var savingPresets = false
     @State private var showingLibrary = false
+    @State private var showingFullBackup = false
     @Environment(PresetLibrary.self) private var library
 
     var body: some View {
@@ -36,6 +37,12 @@ struct SettingsView: View {
                         savingPresets = true
                     } label: {
                         Label("Guardar presets…", systemImage: "square.and.arrow.down.on.square")
+                    }
+                    .disabled(store.state != .ready)
+                    Button {
+                        showingFullBackup = true
+                    } label: {
+                        Label("Respaldo completo del pedal…", systemImage: "externaldrive.badge.icloud")
                     }
                     .disabled(store.state != .ready)
                     Button {
@@ -146,6 +153,7 @@ struct SettingsView: View {
             .navigationTitle("Ajustes")
             .sheet(isPresented: $savingPresets) { SavePresetsSheet(preselect: store.currentPreset.map { [$0] } ?? []) }
             .sheet(isPresented: $showingLibrary) { PresetLibraryView() }
+            .sheet(isPresented: $showingFullBackup) { FullBackupSheet() }
         }
     }
 }

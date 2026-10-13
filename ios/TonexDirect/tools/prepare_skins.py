@@ -102,7 +102,43 @@ def remove_checkerboard(im, verbose=True, icon=False):
     if icon:
         # íconos: dibujo plano sobre los cuadritos → es fondo todo lo claro y sin color
         ink = np.clip(((lo_c - 12) - gray) / 24.0, 0, 1)
-        ink = np.maximum(ink, np.clip((sat - 30) / 30.0, 0, 1))
+        color = np.clip((sat - 30) / 30.0, 0, 1)
+        ink = np.maximum(ink, color)
+        rgb_out = rgb.astype(np.float32)
+        # Sombra paralela sobre los cuadritos: el patrón se sigue viendo oscurecido. Ahí se
+        # promedia (sin cuadritos) y se convierte en sombra negra suave.
+        neutral = (sat < 30) & (gray > 60)
+        rr = max(3, int(round(0.75 * sq)))
+        nm = _box_mean(neutral, rr)
+        mean = _box_mean(np.where(neutral, gray, 0), rr) / np.maximum(nm, 1e-6)
+        upm = neutral & (gray > mean + 4)
+        dnm = neutral & (gray < mean - 4)
+        fu = _box_mean(upm, rr)
+        fd = _box_mean(dnm, rr)
+        # en la sombra se mantiene la proporción claro/oscuro de los cuadritos (≈ hi/lo);
+        # un metal o plástico gris con textura tiene mucho menos contraste
+        up_level = _box_mean(np.where(upm, gray, 0), rr) / np.maximum(fu, 1e-6)
+        dn_level = _box_mean(np.where(dnm, gray, 0), rr) / np.maximum(fd, 1e-6)
+        ratio = up_level / np.maximum(dn_level, 1)
+        want = hi_c / max(lo_c, 1)
+        textured = neutral & (nm > 0.6) & (fu > 0.15) & (fd > 0.15) & (ratio > 1 + (want - 1) * 0.6)
+        # Solo en íconos de color (letras con sombra). En los grises (EQ, RVB, delay apagado)
+        # el propio dibujo tiene texturas que se confundirían con sombra.
+        drawn = ink > 0.5
+        if drawn.sum() == 0 or (color > 0.5)[drawn].mean() < 0.5:
+            textured = np.zeros_like(textured)
+        shadow = np.clip(1.0 - mean / ((hi_c + lo_c) / 2.0), 0, 1) * 0.85
+        ink = np.where(textured, np.maximum(color, shadow), ink)
+        rgb_out[textured & (color < 0.5)] = 0              # la sombra, negra
+        # halo claro alrededor de los contornos (mezcla del borde con los cuadritos): fuera
+        try:
+            from scipy import ndimage as ndi
+            clear = ink < 0.05
+            near = ndi.binary_dilation(clear, structure=np.ones((3, 3), bool), iterations=max(2, int(sq // 12)))
+            ink[near & (gray > 110) & (sat < 30) & ~textured] = 0
+        except ImportError:
+            pass
+        im = Image.fromarray(np.clip(rgb_out, 0, 255).astype(np.uint8), 'RGB')
         alpha = Image.fromarray((ink * 255).astype(np.uint8), 'L').filter(ImageFilter.GaussianBlur(0.8))
         out = im.convert('RGBA'); out.putalpha(alpha)
         if verbose: print(f'   fondo de cuadritos ({sq:.0f} px) quitado (ícono)')
@@ -117,6 +153,22 @@ def remove_checkerboard(im, verbose=True, icon=False):
     bg = np.asarray(lab) == 128
     try:
         from scipy import ndimage as ndi
+        # Cuadritos "desteñidos": zonas donde el patrón cambia de tono (p. ej. 225/240 en vez de
+        # 205/255). Siguen siendo cuadritos: grises claros que alternan alrededor de su promedio
+        # local. Se agregan si tocan el fondo ya encontrado y están cerca de él (≤ 3 cuadritos),
+        # para no tocar placas claras lisas del amp/pedal.
+        light = (gray > lo_c - 25) & (sat < 18)
+        rr = max(3, int(round(0.75 * sq)))
+        mean = _box_mean(np.where(light, gray, 0), rr) / np.maximum(_box_mean(light, rr), 1e-6)
+        up = light & (gray > mean + 4)
+        dn = light & (gray < mean - 4)
+        fu, fd, fl = _box_mean(up, rr), _box_mean(dn, rr), _box_mean(light, rr)
+        faded = light & (fl > 0.85) & (fu > 0.2) & (fd > 0.2)
+        near = ndi.binary_dilation(bg, iterations=int(3 * sq))
+        extra = (faded | (light & ndi.binary_dilation(faded, iterations=2))) & near & ~bg
+        lab2, n2 = ndi.label(extra | bg)
+        ids = np.unique(lab2[bg]); ids = ids[ids > 0]
+        bg = bg | (np.isin(lab2, ids) & extra)
         # rayitas entre cuadritos (bordes mezclados por el JPEG) que quedaron entre dos zonas de fondo
         k = max(3, int(sq // 5)) | 1
         closed = ndi.binary_closing(bg, structure=np.ones((k, k), bool))
@@ -177,6 +229,37 @@ def remove_edge_background(im, tolerance=40, icon=False):
     return out
 
 
+def drop_specks(im, keep_ratio=0.03):
+    """Quita restos del fondo: piezas opacas pequeñas (< 3 % de la mayor), también las pegadas
+    al objeto por un "puente" delgado (se separan con una apertura morfológica)."""
+    try:
+        from scipy import ndimage as ndi
+    except ImportError:
+        return im
+    a = np.asarray(im.getchannel('A'))
+    mask = a > 8
+    k = max(2, round(min(a.shape) / 130))               # ≈ 14 px en imágenes de 1800 px
+    opened = ndi.binary_opening(mask, iterations=k)
+    lab, n = ndi.label(opened)
+    if n == 0:
+        return im
+    area = np.bincount(lab.ravel())
+    area[0] = 0
+    kept = np.isin(lab, np.flatnonzero(area >= keep_ratio * area.max()))
+    keep = ndi.binary_dilation(kept, iterations=k + 2) & mask
+    # lo que quede suelto y pequeño tras recuperar los bordes, también fuera
+    lab2, n2 = ndi.label(keep)
+    if n2 > 1:
+        ar2 = np.bincount(lab2.ravel()); ar2[0] = 0
+        keep = np.isin(lab2, np.flatnonzero(ar2 >= keep_ratio * ar2.max()))
+    if keep.sum() == mask.sum():
+        return im
+    a = np.where(keep, a, 0).astype(np.uint8)
+    im = im.copy()
+    im.putalpha(Image.fromarray(a, 'L'))
+    return im
+
+
 def asset_name(filename, existing):
     stem = os.path.splitext(os.path.basename(filename))[0].lower()
     for cand in (stem, 'skin_' + stem, 'pskin_' + stem):
@@ -191,6 +274,8 @@ def install(im, name):
     """Quita el fondo, recorta, ajusta tamano y guarda como unico PNG del imageset."""
     is_icon = name.startswith('effect_icon')
     im = remove_edge_background(im, icon=is_icon)
+    if not is_icon:
+        im = drop_specks(im)
     bbox = im.getchannel('A').point(lambda v: 255 if v > 8 else 0).getbbox()
     if bbox:
         im = im.crop(bbox)
@@ -198,13 +283,21 @@ def install(im, name):
         side = round(max(im.size) * 1.06)
         canvas = Image.new('RGBA', (side, side), (0, 0, 0, 0))
         canvas.alpha_composite(im, ((side - im.width) // 2, (side - im.height) // 2))
-        im = canvas.resize((ICON_SIZE, ICON_SIZE), Image.LANCZOS)
+        # 'RGBa' (premultiplicado): así el color de lo transparente no se cuela en los bordes
+        im = canvas.convert('RGBa').resize((ICON_SIZE, ICON_SIZE), Image.LANCZOS).convert('RGBA')
     elif im.width > MAX_W:
-        im = im.resize((MAX_W, round(im.height * MAX_W / im.width)), Image.LANCZOS)
+        im = im.convert('RGBa').resize((MAX_W, round(im.height * MAX_W / im.width)), Image.LANCZOS).convert('RGBA')
     d = os.path.join(ASSETS, name + '.imageset')
     for old in os.listdir(d):
-        if old != 'Contents.json':
-            os.remove(os.path.join(d, old))
+        if old not in ('Contents.json', name + '.png'):
+            try:
+                os.remove(os.path.join(d, old))
+            except OSError:
+                pass   # sin permiso de borrar: Contents.json igual apunta solo al PNG nuevo
+    # lo transparente en negro: si algo escala la imagen sin premultiplicar, no aparece un halo claro
+    arr = np.asarray(im.convert('RGBA')).copy()
+    arr[arr[..., 3] < 8, :3] = 0
+    im = Image.fromarray(arr, 'RGBA')
     im.save(os.path.join(d, name + '.png'), 'PNG', optimize=True)
     json.dump({'images': [{'filename': name + '.png', 'idiom': 'universal'}],
                'info': {'author': 'xcode', 'version': 1}},
