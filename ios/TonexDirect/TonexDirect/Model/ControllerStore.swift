@@ -33,6 +33,15 @@ struct Preset: Identifiable, Equatable {
     let id: Int          // índice 0-based del pedal
     let number: Int      // número visible (índice + 1)
     var name: String
+
+    /// El pedal agrupa los presets en bancos de 3 (A, B, C), como el editor de IK.
+    static let perBank = 3
+    var bank: Int { id / Preset.perBank }
+    var slot: String { ["A", "B", "C"][id % Preset.perBank] }
+    /// "00", "01"…
+    var bankText: String { String(format: "%02d", bank) }
+    /// "01 B": como lo muestra el pedal.
+    var label: String { "\(bankText) \(slot)" }
 }
 
 /// Fuente única de verdad. Habla directamente con el Tonex Pedal por USB a través del

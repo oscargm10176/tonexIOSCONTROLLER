@@ -24,6 +24,7 @@ struct LiveView: View {
 
                 HStack(spacing: 12) {
                     ForEach(switches, id: \.self) { LiveFootswitch(block: $0) }
+                    if store.tempoAvailable { LiveTapSwitch() }
                 }
                 .frame(height: min(150, max(100, geo.size.height * 0.2)))
                 .disabled(store.state != .ready)
@@ -48,7 +49,7 @@ struct LiveView: View {
                         .frame(maxHeight: height * (skin.isPedal ? 0.34 : 0.4))
                         .shadow(color: .black.opacity(0.7), radius: 18, y: 10)
                 }
-                Text(store.currentPresetInfo.map { "\($0.number)" } ?? "–")
+                Text(store.currentPresetInfo?.label ?? "–")
                     .font(.system(size: 56, weight: .heavy, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(.tint)
@@ -107,7 +108,7 @@ struct LivePresetButton: View {
                 Image(systemName: direction < 0 ? "chevron.left" : "chevron.right")
                     .font(.system(size: 54, weight: .bold))
                 if let t = target {
-                    Text("\(t.number)")
+                    Text(t.label)
                         .font(.title2.weight(.heavy).monospacedDigit())
                         .foregroundStyle(.secondary)
                     Text(t.name)
@@ -130,7 +131,7 @@ struct LivePresetButton: View {
         .buttonStyle(LivePressStyle())
         .disabled(store.state != .ready)
         .accessibilityLabel(direction < 0 ? "Preset anterior" : "Preset siguiente")
-        .accessibilityValue(target.map { "\($0.number), \($0.name)" } ?? "")
+        .accessibilityValue(target.map { "Banco \($0.bank) \($0.slot), \($0.name)" } ?? "")
     }
 }
 

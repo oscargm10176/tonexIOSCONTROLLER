@@ -163,7 +163,7 @@ struct PresetHeroCard: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 14) {
                 if showPresetArrows { presetArrow("chevron.left") { store.previousPreset() } }
-                Text(store.currentPresetInfo.map { "\($0.number)" } ?? "–")
+                Text(store.currentPresetInfo?.label ?? "–")
                     .font(.system(size: 52, weight: .heavy, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText())
@@ -255,7 +255,7 @@ struct SkinPickerSheet: View {
                 section("Amplificadores", AmpSkins.amps)
                 section("Pedales", AmpSkins.pedals)
             }
-            .navigationTitle(preset.map { "Imagen para \($0.number) · \($0.name)" } ?? "Imagen")
+            .navigationTitle(preset.map { "Imagen para \($0.label) · \($0.name)" } ?? "Imagen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

@@ -65,6 +65,12 @@ struct ContentView: View {
                         .pickerStyle(.segmented)
                         .frame(width: 380)
                     }
+                    // Tempo a la altura de las pestañas (en Editar y Live).
+                    if store.tempoAvailable && store.section != .settings {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            TempoBar()
+                        }
+                    }
                 }
             }
         }
@@ -97,30 +103,49 @@ struct PresetSidebar: View {
     private var filtered: [Preset] {
         let q = search.trimmingCharacters(in: .whitespaces)
         guard !q.isEmpty else { return store.presets }
+        let compact = q.replacingOccurrences(of: " ", with: "").uppercased()
         return store.presets.filter {
             $0.name.localizedCaseInsensitiveContains(q) || String($0.number) == q
+                || $0.label.replacingOccurrences(of: " ", with: "") == compact   // "01B"
+                || String($0.bank) + $0.slot == compact                          // "1B"
         }
+    }
+
+    /// Presets agrupados por banco, en orden.
+    private var banks: [(bank: Int, presets: [Preset])] {
+        Dictionary(grouping: filtered, by: \.bank)
+            .sorted { $0.key < $1.key }
+            .map { (bank: $0.key, presets: $0.value) }
     }
 
     var body: some View {
         ScrollViewReader { proxy in
-            List(filtered) { preset in
-                PresetRow(preset: preset, isCurrent: preset.id == store.currentPreset)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        UISelectionFeedbackGenerator().selectionChanged()
-                        store.selectPreset(preset.id)
-                    }
-                    .listRowBackground(preset.id == store.currentPreset ? Color.orange.opacity(0.22) : Color.clear)
-                    .contextMenu {
-                        Button { pickingFor = preset.id } label: { Label("Elegir imagen…", systemImage: "photo") }
-                        if store.chosenSkin(for: preset.id) != nil {
-                            Button(role: .destructive) { store.clearSkin(for: preset.id) } label: {
-                                Label("Quitar imagen", systemImage: "trash")
-                            }
+            List {
+                ForEach(banks, id: \.bank) { group in
+                    Section {
+                        ForEach(group.presets) { preset in
+                            PresetRow(preset: preset, isCurrent: preset.id == store.currentPreset)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    UISelectionFeedbackGenerator().selectionChanged()
+                                    store.selectPreset(preset.id)
+                                }
+                                .listRowBackground(preset.id == store.currentPreset ? Color.orange.opacity(0.22) : Color.clear)
+                                .contextMenu {
+                                    Button { pickingFor = preset.id } label: { Label("Elegir imagen…", systemImage: "photo") }
+                                    if store.chosenSkin(for: preset.id) != nil {
+                                        Button(role: .destructive) { store.clearSkin(for: preset.id) } label: {
+                                            Label("Quitar imagen", systemImage: "trash")
+                                        }
+                                    }
+                                }
+                                .id(preset.id)
                         }
+                    } header: {
+                        BankHeader(bank: group.bank,
+                                   isCurrent: store.currentPresetInfo?.bank == group.bank)
                     }
-                    .id(preset.id)
+                }
             }
             .listStyle(.plain)
             .searchable(text: $search, placement: .navigationBarDrawer(displayMode: .always), prompt: "Buscar preset")
@@ -143,10 +168,10 @@ struct PresetRow: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Text("\(preset.number)")
+            Text(preset.slot)
                 .font(.callout.monospacedDigit().weight(.bold))
                 .foregroundStyle(isCurrent ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-                .frame(width: 36, alignment: .trailing)
+                .frame(width: 22, alignment: .center)
             SkinThumbnail(presetID: preset.id)
             Text(preset.name)
                 .font(isCurrent ? .body.weight(.semibold) : .body)
@@ -159,6 +184,28 @@ struct PresetRow: View {
             }
         }
         .padding(.vertical, 2)
+    }
+}
+
+/// Encabezado de cada banco en la lista ("BANCO 01"), fijo arriba al desplazarse.
+struct BankHeader: View {
+    let bank: Int
+    let isCurrent: Bool
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(String(format: "%02d", bank))
+                .font(.title3.weight(.heavy).monospacedDigit())
+                .foregroundStyle(isCurrent ? AnyShapeStyle(.tint) : AnyShapeStyle(.primary))
+            Text("BANCO")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Spacer()
+        }
+        .padding(.vertical, 2)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Banco \(bank)")
+        .accessibilityAddTraits(.isHeader)
     }
 }
 
