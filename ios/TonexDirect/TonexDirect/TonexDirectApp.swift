@@ -6,6 +6,8 @@ struct TonexDirectApp: App {
     @State private var store = ControllerStore()
     /// Pedal de pie Bluetooth/USB MIDI (iRig BlueBoard, etc.).
     @State private var foot = FootController()
+    /// Presets guardados en el iPad.
+    @State private var library = PresetLibrary()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -13,11 +15,17 @@ struct TonexDirectApp: App {
             ContentView()
                 .environment(store)
                 .environment(foot)
+                .environment(library)
                 .preferredColorScheme(.dark)
                 .tint(.orange)
                 .onAppear {
                     store.connect()
                     foot.attach(store)
+                }
+                // Un .tonepreset abierto desde Archivos, AirDrop, Mail…: se importa a "Mis presets".
+                .onOpenURL { url in
+                    library.importFiles([url])
+                    library.wantsToShow = true
                 }
         }
         .onChange(of: scenePhase) { _, phase in

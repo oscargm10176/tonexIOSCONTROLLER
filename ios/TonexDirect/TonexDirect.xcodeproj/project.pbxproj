@@ -440,6 +440,7 @@
 				DEVELOPMENT_TEAM = S3BX56D2E6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Support/TonexDirect-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = TONE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -479,6 +480,7 @@
 				DEVELOPMENT_TEAM = S3BX56D2E6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Support/TonexDirect-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = TONE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;

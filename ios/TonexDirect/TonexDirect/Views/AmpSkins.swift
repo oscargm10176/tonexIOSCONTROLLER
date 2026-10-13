@@ -179,6 +179,15 @@ struct PresetHeroCard: View {
                 if showPresetArrows { presetArrow("chevron.right") { store.nextPreset() } }
             }
 
+            // Tone Model y amp real, leídos del preset (cuando el pedal los trae).
+            if let c = store.currentPreset, let info = store.toneModels[c] {
+                Label(info.amp.map { "\(info.model)  ·  \($0)" } ?? info.model, systemImage: "waveform")
+                    .font(.system(size: labelSize * 0.3, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+
             if showChain, store.state == .ready {
                 EffectsChainView(selection: store.stageBlock, onSelect: { store.stageBlock = $0 })
             }

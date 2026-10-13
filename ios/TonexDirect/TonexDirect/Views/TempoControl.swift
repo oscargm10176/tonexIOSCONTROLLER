@@ -174,14 +174,25 @@ struct LiveTapSwitch: View {
             UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
             if let v = tapper.tap() { store.setBPM(v) }
         } label: {
-            VStack(spacing: 8) {
-                TempoBeat(bpm: store.bpm, size: 16)
-                Text("TAP")
-                    .font(.title3.weight(.bold))
-                Text("\(store.bpm) BPM")
-                    .font(.callout.monospacedDigit())
+            // El BPM en grande para leerlo de lejos; "TAP" y la luz, arriba en chico.
+            VStack(spacing: 2) {
+                HStack(spacing: 8) {
+                    TempoBeat(bpm: store.bpm, size: 14)
+                    Text("TAP")
+                        .font(.headline.weight(.heavy))
+                }
+                Text("\(store.bpm)")
+                    .font(.system(size: 58, weight: .heavy, design: .rounded))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .contentTransition(.numericText())
+                    .animation(.snappy, value: store.bpm)
+                Text("BPM")
+                    .font(.caption.weight(.bold))
                     .foregroundStyle(.secondary)
             }
+            .padding(.horizontal, 6)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(RoundedRectangle(cornerRadius: 20).fill(Color(white: 0.09).opacity(0.85)))
             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.orange.opacity(0.5), lineWidth: 1))

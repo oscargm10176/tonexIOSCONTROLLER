@@ -4,6 +4,9 @@ import UIKit
 struct SettingsView: View {
     @Environment(ControllerStore.self) private var store
     @Environment(\.openURL) private var openURL
+    @State private var savingPresets = false
+    @State private var showingLibrary = false
+    @Environment(PresetLibrary.self) private var library
 
     var body: some View {
         Group {
@@ -26,6 +29,28 @@ struct SettingsView: View {
                     Text("Conexión USB")
                 } footer: {
                     Text("Conecta el Tonex Pedal al puerto USB-C del iPad (cable USB-C a USB-B, o adaptador). La primera vez, activa el driver en Ajustes › General › Drivers.")
+                }
+
+                Section {
+                    Button {
+                        savingPresets = true
+                    } label: {
+                        Label("Guardar presets…", systemImage: "square.and.arrow.down.on.square")
+                    }
+                    .disabled(store.state != .ready)
+                    Button {
+                        showingLibrary = true
+                    } label: {
+                        LabeledContent {
+                            Text("\(library.entries.count)")
+                        } label: {
+                            Label("Mis presets", systemImage: "tray.full")
+                        }
+                    }
+                } header: {
+                    Text("Respaldo de presets")
+                } footer: {
+                    Text("Elige uno, un banco o todos y se guardan en este iPad. Solo lee del pedal, no cambia nada. Desde “Mis presets” puedes compartirlos o copiarlos a otra ubicación.")
                 }
 
                 FootPedalSection()
@@ -119,6 +144,8 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Ajustes")
+            .sheet(isPresented: $savingPresets) { SavePresetsSheet(preselect: store.currentPreset.map { [$0] } ?? []) }
+            .sheet(isPresented: $showingLibrary) { PresetLibraryView() }
         }
     }
 }

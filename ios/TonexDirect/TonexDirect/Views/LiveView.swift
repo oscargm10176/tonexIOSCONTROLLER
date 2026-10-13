@@ -58,6 +58,12 @@ struct LiveView: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.35)
                     .multilineTextAlignment(.center)
+                if let c = store.currentPreset, let info = store.toneModels[c] {
+                    Text(info.amp ?? info.model)
+                        .font(.title2.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
                 Spacer(minLength: 0)
             }
             .shadow(color: .black.opacity(0.7), radius: 10)   // se lee bien sobre la foto de fondo

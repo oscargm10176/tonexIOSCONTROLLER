@@ -137,6 +137,8 @@ final class ControllerStore {
     @ObservationIgnored private var dumpFrames = 0
     @ObservationIgnored private var dumpFinishTask: Task<Void, Never>?
     @ObservationIgnored private var dumpTimeoutTask: Task<Void, Never>?
+    /// Si alguien espera el preset completo (respaldo), se le entrega en vez de guardarlo aquí.
+    @ObservationIgnored private var dumpWaiter: CheckedContinuation<[UInt8]?, Never>?
 
     private static var dumpsFolder: URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -155,17 +157,38 @@ final class ControllerStore {
     /// Pide al pedal el preset completo (~30 KB) del preset activo y lo guarda como archivo.
     func downloadFullPreset() {
         guard phase == .ready, dumpInProgress == nil, let c = currentPreset else { return }
+        startDump(c)
+    }
+
+    /// Lee del pedal el preset completo de cualquier posición (solo lectura, no lo cambia).
+    /// Devuelve nil si el pedal no responde o ya hay otra lectura en curso.
+    func readFullPreset(_ id: Int, editBuffer: Bool = false) async -> [UInt8]? {
+        // Una lectura a la vez: si hay otra en curso (p. ej. la búsqueda de Tone Models), espera.
+        var waited = 0
+        while dumpInProgress != nil, waited < 300 {
+            try? await Task.sleep(for: .milliseconds(50)); waited += 1
+        }
+        guard phase == .ready, dumpInProgress == nil, presets.indices.contains(id) else { return nil }
+        return await withCheckedContinuation { cont in
+            dumpWaiter = cont
+            startDump(id, editBuffer: editBuffer)
+        }
+    }
+
+    private func startDump(_ c: Int, editBuffer: Bool = false) {
         dumpBuffer.removeAll()
         dumpFrames = 0
         dumpInProgress = c
-        note("Pidiendo preset completo \(c + startPreset)…")
-        send(TonexPedal.requestPresetDetails(c, full: true))
+        note("Pidiendo preset completo \(c + startPreset)\(editBuffer ? " (búfer de edición)" : "")…")
+        send(editBuffer ? TonexPedal.requestEditBufferFull : TonexPedal.requestPresetDetails(c, full: true))
         dumpTimeoutTask?.cancel()
         dumpTimeoutTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(8))
             guard let self, !Task.isCancelled, self.dumpInProgress != nil, self.dumpFrames == 0 else { return }
             self.note("El pedal no respondió al pedido de preset completo")
             self.dumpInProgress = nil
+            self.dumpWaiter?.resume(returning: nil)
+            self.dumpWaiter = nil
         }
     }
 
@@ -176,6 +199,12 @@ final class ControllerStore {
         }
         dumpBuffer.append(contentsOf: payload)
         dumpFrames += 1
+        // Normalmente llega completo en una sola trama: listo de inmediato.
+        if TonexPedal.fullPresetBody(dumpBuffer) != nil {
+            dumpFinishTask?.cancel()
+            finishDump()
+            return
+        }
         note("Preset completo: trama \(dumpFrames), \(payload.count) bytes")
         // Por si llega en varias tramas: se guarda cuando pasan 800 ms sin más.
         dumpFinishTask?.cancel()
@@ -190,6 +219,13 @@ final class ControllerStore {
         guard let c = dumpInProgress else { return }
         dumpInProgress = nil
         dumpTimeoutTask?.cancel()
+        if let waiter = dumpWaiter {
+            dumpWaiter = nil
+            let data = dumpBuffer
+            dumpBuffer.removeAll()
+            waiter.resume(returning: data)
+            return
+        }
         let name = presets.indices.contains(c) ? presets[c].name : "preset"
         let safe = name.map { $0.isLetter || $0.isNumber ? $0 : "_" }.reduce(into: "") { $0.append($1) }
         let stamp = Self.fileStamp.string(from: Date())
@@ -245,6 +281,12 @@ final class ControllerStore {
     /// Imagen sugerida por palabras clave (nombre del preset / textos internos).
     private(set) var autoSkins: [Int: Int] = [:]
 
+    /// Tone Model y amp real de cada preset (se leen del preset completo y se guardan).
+    private(set) var toneModels: [Int: TonexPedal.ToneModelInfo] = ControllerStore.loadToneModels()
+    @ObservationIgnored var toneModelNames: [Int: String] = ControllerStore.loadToneModelNames()
+    @ObservationIgnored var toneScanTask: Task<Void, Never>?
+    static let toneModelsKey = "toneModels.v1"
+
     /// Lo que se muestra: la elección del usuario o, si no hay, la sugerencia.
     func displaySkin(for preset: Int) -> (index: Int, isAuto: Bool)? {
         if let c = skinIndexes[preset] { return (c, false) }
@@ -255,7 +297,10 @@ final class ControllerStore {
     private func updateGuess(for preset: Int, texts: [String] = []) {
         guard presets.indices.contains(preset) else { return }
         // Primero los textos internos (si traen el modelo), luego el nombre.
-        let guess = (texts.isEmpty ? nil : AmpSkins.guess(texts)) ?? AmpSkins.guess([presets[preset].name])
+        // Lo más fiable: el amp real y el nombre del Tone Model que trae el preset.
+        let info = toneModels[preset]
+        let fromModel = info.flatMap { i in AmpSkins.guess([i.amp ?? ""]) ?? AmpSkins.guess([i.model]) }
+        let guess = fromModel ?? (texts.isEmpty ? nil : AmpSkins.guess(texts)) ?? AmpSkins.guess([presets[preset].name])
         if autoSkins[preset] != guess { autoSkins[preset] = guess }
     }
 
@@ -494,6 +539,8 @@ final class ControllerStore {
         state = .ready
         hasBeenReady = true
         UIApplication.shared.isIdleTimerDisabled = true   // pantalla encendida en escenario
+        for i in presets.indices { updateGuess(for: i) }
+        scanToneModels()
     }
 
     // MARK: Recepción
@@ -704,5 +751,180 @@ final class ControllerStore {
             globalConfig = config
             send(TonexPedal.sendGlobalConfig(config))
         }
+    }
+}
+
+
+// MARK: - Renombrar en el pedal
+
+extension ControllerStore {
+    enum RenameOutcome: Equatable {
+        case done
+        case failed(String)
+    }
+
+    /// Cambia el nombre del preset en el pedal, igual que TONEX Editor: lee el preset completo,
+    /// cambia solo el nombre y lo vuelve a escribir en su posición; luego lo relee para confirmar.
+    /// Si es el preset que suena, se usa el búfer de edición (como el Editor), así que los
+    /// cambios de perillas que tengas también quedan guardados.
+    func renamePreset(_ id: Int, to rawName: String) async -> RenameOutcome {
+        let name = rawName.trimmingCharacters(in: .whitespaces)
+        guard phase == .ready, presets.indices.contains(id) else { return .failed("El pedal no está listo.") }
+
+        let isCurrent = id == currentPreset
+        guard let raw = await readFullPreset(id, editBuffer: isCurrent),
+              let body = TonexPedal.fullPresetBody(raw) else {
+            return .failed("El pedal no respondió al leer el preset.")
+        }
+        // Que el bloque leído sea de verdad este preset.
+        let idxAt = 4
+        let readIndex = body[idxAt] == 0x80 && body.count > idxAt + 1 ? Int(body[idxAt + 1]) : Int(body[idxAt])
+        guard readIndex == id else { return .failed("El pedal devolvió otro preset (\(readIndex + startPreset)); no se cambió nada.") }
+
+        let newBody: [UInt8]
+        do {
+            newBody = try TonexPedal.renamedBody(body, to: name)
+        } catch TonexPedal.RenameError.invalidName {
+            return .failed("Usa de 1 a \(TonexPedal.nameLength) letras sin acentos ni ñ (solo caracteres ASCII).")
+        } catch TonexPedal.RenameError.unknownLayout(let why) {
+            note("Renombrar cancelado, formato inesperado (\(isCurrent ? "búfer" : "guardado"), \(raw.count) bytes): \(why)")
+            return .failed("El formato del preset no es el esperado; no se cambió nada.\n\n\(why)")
+        } catch {
+            return .failed("El formato del preset no es el esperado; no se cambió nada.")
+        }
+
+        note("Renombrando preset \(id + startPreset) a “\(name)” (\(newBody.count) bytes)")
+        send(TonexPedal.writePreset(body: newBody))
+        try? await Task.sleep(for: .milliseconds(700))
+
+        // Confirmar leyendo lo que quedó guardado.
+        guard let check = await readFullPreset(id),
+              let saved = TonexPedal.fullPresetBody(check) else {
+            return .failed("Se envió el nombre pero no pude confirmarlo. Revisa el pedal.")
+        }
+        let stored = TonexPedal.parsePresetDetails(saved).name ?? ""
+        guard stored == name else {
+            return .failed("El pedal guardó “\(stored)”. Revisa el preset.")
+        }
+        presets[id].name = name
+        saveNameCache()
+        rememberToneModel(saved, for: id)
+        note("Preset \(id + startPreset) renombrado a “\(name)”")
+        return .done
+    }
+
+    // MARK: Guardar / cargar / intercambiar (mismo comando de escritura)
+
+    /// Escribe un cuerpo de preset en su posición y lo relee para confirmar.
+    private func writeAndVerify(_ body: [UInt8], slot: Int, expectName: String?) async -> RenameOutcome {
+        note("Escribiendo preset en \(slot + startPreset) (\(body.count) bytes)")
+        send(TonexPedal.writePreset(body: body))
+        try? await Task.sleep(for: .milliseconds(700))
+        guard let check = await readFullPreset(slot), let saved = TonexPedal.fullPresetBody(check) else {
+            return .failed("Se envió, pero no pude confirmarlo. Revisa el pedal.")
+        }
+        let stored = TonexPedal.parsePresetDetails(saved).name ?? ""
+        if let expectName, stored != expectName {
+            return .failed("El pedal tiene “\(stored)” en esa posición. Revisa el preset.")
+        }
+        if presets.indices.contains(slot), !stored.isEmpty, presets[slot].name != stored {
+            presets[slot].name = stored
+            saveNameCache()
+        }
+        rememberToneModel(saved, for: slot)
+        return .done
+    }
+
+    /// Guarda en el pedal lo que suena ahora (perillas y efectos), como el botón Save del Editor.
+    func saveCurrentToPedal() async -> RenameOutcome {
+        guard phase == .ready, let c = currentPreset else { return .failed("El pedal no está listo.") }
+        guard let raw = await readFullPreset(c, editBuffer: true), let body = TonexPedal.fullPresetBody(raw) else {
+            return .failed("El pedal no respondió al leer el preset.")
+        }
+        guard TonexPedal.slot(ofBody: body) == c else { return .failed("El pedal devolvió otro preset; no se guardó nada.") }
+        let name = TonexPedal.parsePresetDetails(body).name ?? presets[c].name
+        guard let out = try? TonexPedal.renamedBody(body, to: name) else {
+            return .failed("El formato del preset no es el esperado; no se guardó nada.")
+        }
+        return await writeAndVerify(out, slot: c, expectName: name)
+    }
+
+    /// Carga un preset guardado (con su Tone Model) en una posición del pedal, reemplazando lo que haya.
+    func loadPreset(_ saved: SavedPreset, into slot: Int) async -> RenameOutcome {
+        guard phase == .ready, presets.indices.contains(slot) else { return .failed("El pedal no está listo.") }
+        guard let body = TonexPedal.fullPresetBody(Array(saved.raw)),
+              let moved = try? TonexPedal.body(body, movedTo: slot),
+              (try? TonexPedal.renamedBody(moved, to: saved.name)) != nil else {
+            return .failed("Ese archivo no tiene el formato de preset completo; no se cargó nada.")
+        }
+        let result = await writeAndVerify(moved, slot: slot, expectName: saved.name)
+        if result == .done, slot == currentPreset { send(TonexPedal.setPreset(slot)) }   // recargar lo que suena
+        return result
+    }
+
+    /// Intercambia dos posiciones leyendo ambas y escribiendo cada una en la otra.
+    func swapPresets(_ a: Int, _ b: Int) async -> RenameOutcome {
+        guard a != b, presets.indices.contains(a), presets.indices.contains(b) else { return .failed("Elige dos posiciones distintas.") }
+        guard let ra = await readFullPreset(a), let ba = TonexPedal.fullPresetBody(ra),
+              let rb = await readFullPreset(b), let bb = TonexPedal.fullPresetBody(rb),
+              TonexPedal.slot(ofBody: ba) == a, TonexPedal.slot(ofBody: bb) == b,
+              let toB = try? TonexPedal.body(ba, movedTo: b), let toA = try? TonexPedal.body(bb, movedTo: a) else {
+            return .failed("No pude leer las dos posiciones; no se cambió nada.")
+        }
+        let nameA = TonexPedal.parsePresetDetails(ba).name
+        let nameB = TonexPedal.parsePresetDetails(bb).name
+        let first = await writeAndVerify(toA, slot: a, expectName: nameB)
+        guard first == .done else { return first }
+        let second = await writeAndVerify(toB, slot: b, expectName: nameA)
+        if second == .done, a == currentPreset || b == currentPreset, let c = currentPreset { send(TonexPedal.setPreset(c)) }
+        return second
+    }
+
+    // MARK: Tone Models
+
+    func rememberToneModel(_ body: [UInt8], for id: Int) {
+        guard presets.indices.contains(id) else { return }
+        if let info = TonexPedal.toneModelInfo(body: body) {
+            toneModels[id] = info
+        } else {
+            toneModels[id] = nil
+        }
+        toneModelNames[id] = presets[id].name
+        saveToneModels()
+        updateGuess(for: id)
+    }
+
+    /// Lee en segundo plano los presets cuyo Tone Model aún no conocemos (≈0.2 s cada uno).
+    func scanToneModels() {
+        toneScanTask?.cancel()
+        toneScanTask = Task { [weak self] in
+            guard let self else { return }
+            for id in self.presets.indices {
+                if Task.isCancelled || self.phase != .ready { return }
+                // Ya lo tenemos y el preset no cambió de nombre: no hace falta leerlo.
+                if self.toneModelNames[id] == self.presets[id].name { continue }
+                guard let raw = await self.readFullPreset(id), let body = TonexPedal.fullPresetBody(raw) else { continue }
+                self.rememberToneModel(body, for: id)
+            }
+            self.note("Tone Models: \(self.toneModels.count) de \(self.presets.count) presets identificados")
+        }
+    }
+
+    private func saveToneModels() {
+        let models = Dictionary(uniqueKeysWithValues: toneModels.map { (String($0.key), $0.value) })
+        if let data = try? JSONEncoder().encode(models) { UserDefaults.standard.set(data, forKey: Self.toneModelsKey) }
+        let names = Dictionary(uniqueKeysWithValues: toneModelNames.map { (String($0.key), $0.value) })
+        UserDefaults.standard.set(names, forKey: Self.toneModelsKey + ".names")
+    }
+
+    static func loadToneModels() -> [Int: TonexPedal.ToneModelInfo] {
+        guard let data = UserDefaults.standard.data(forKey: toneModelsKey),
+              let d = try? JSONDecoder().decode([String: TonexPedal.ToneModelInfo].self, from: data) else { return [:] }
+        return Dictionary(uniqueKeysWithValues: d.compactMap { k, v in Int(k).map { ($0, v) } })
+    }
+
+    static func loadToneModelNames() -> [Int: String] {
+        guard let d = UserDefaults.standard.dictionary(forKey: toneModelsKey + ".names") as? [String: String] else { return [:] }
+        return Dictionary(uniqueKeysWithValues: d.compactMap { k, v in Int(k).map { ($0, v) } })
     }
 }

@@ -30,6 +30,123 @@ enum TonexPedal {
         return m
     }
 
+    /// Preset completo del búfer de edición (lo que suena ahora, con los cambios sin guardar).
+    static let requestEditBufferFull: [UInt8] = [0xB9, 0x03, 0x81, 0x00, 0x02, 0x82, 0x06, 0x00, 0x80, 0x10, 0x03,
+                                                  0xB9, 0x04, 0x10, 0x00, 0x00, 0x01]
+
+    // MARK: Escritura de presets
+    //
+    // Capturado de TONEX Editor (macOS) al renombrar un preset, 2026-10-13:
+    //   TX  B9 03 81 03 02 82 <len LSB> <len MSB> 80 10 03 + cuerpo (≈30 KB)
+    //   RX  B9 03 05 00 10                         (acuse)
+    // El cuerpo es el mismo que el pedal devuelve al pedir el preset completo:
+    //   B9 04 <01 = guardado | 00 = búfer> 00 <índice> B9 04 B9 04 B9 02 BC 21 <33 bytes nombre> <largo> …
+    // Comparando lecturas antes/después: el pedal guarda tal cual la cabecera (nombre,
+    // parámetros, etiquetas) y conserva su Tone Model; la cola del bloque es relleno.
+
+    /// Mensaje para guardar un preset completo en su posición (la que va dentro del cuerpo).
+    static func writePreset(body: [UInt8]) -> [UInt8] {
+        let n = body.count
+        return [0xB9, 0x03, 0x81, 0x03, 0x02, 0x82, UInt8(n & 0xFF), UInt8((n >> 8) & 0xFF), 0x80, 0x10, 0x03] + body
+    }
+
+    /// Cuerpo de una respuesta de preset completo (sin su encabezado).
+    static func fullPresetBody(_ m: [UInt8]) -> [UInt8]? {
+        guard m.count > 9, m[0] == 0xB9, m[1] == 0x03 else { return nil }
+        var i = 2
+        guard let type = TonexBytes.parseValue(m, &i), type == 0x0203 || type == 0x0303,
+              let size = TonexBytes.parseValue(m, &i),
+              TonexBytes.parseValue(m, &i) != nil, m.count - i == size, size > 64 else { return nil }
+        return Array(m[i...])
+    }
+
+    enum RenameError: Error { case unknownLayout(String), invalidName }
+
+    private static func hex<C: Collection>(_ c: C) -> String where C.Element == UInt8 {
+        c.map { String(format: "%02X", $0) }.joined(separator: " ")
+    }
+
+    /// Devuelve el cuerpo con otro nombre, listo para `writePreset`. Revisa que el formato sea
+    /// exactamente el conocido; si algo no cuadra, no toca nada (mejor fallar que dañar el preset).
+    static func renamedBody(_ body: [UInt8], to newName: String) throws -> [UInt8] {
+        let ascii = Array(newName.utf8)
+        guard !ascii.isEmpty, ascii.count <= nameLength, ascii.allSatisfy({ $0 >= 0x20 && $0 < 0x7F }) else {
+            throw RenameError.invalidName
+        }
+        // B9 04 <flag> 00 <índice (80 xx si ≥128)> …
+        guard body.count > 64, body[0] == 0xB9, body[1] == 0x04, body[2] <= 0x01, body[3] == 0x00 else {
+            throw RenameError.unknownLayout("inicio: \(hex(body.prefix(16)))")
+        }
+        guard let marker = TonexBytes.find(presetNameMarker, in: Array(body.prefix(24))) else {
+            throw RenameError.unknownLayout("sin marcador de nombre: \(hex(body.prefix(24)))")
+        }
+        let start = marker + presetNameMarker.count          // 33 bytes de nombre
+        let lengthAt = start + nameLength + 1                  // y luego su largo
+        guard lengthAt + 1 < body.count else { throw RenameError.unknownLayout("cuerpo corto (\(body.count))") }
+        let oldName = body[start..<(start + nameLength + 1)].prefix { $0 != 0 }
+        guard Int(body[lengthAt]) == oldName.count, body[lengthAt + 1] == 0xBA else {
+            throw RenameError.unknownLayout("largo \(body[lengthAt]) vs \(oldName.count), sigue \(String(format: "%02X", body[lengthAt + 1])); "
+                                            + hex(body[marker..<min(body.count, lengthAt + 4)]))
+        }
+
+        var out = body
+        out[2] = 0x01                                          // guardar en la posición
+        for k in 0...nameLength { out[start + k] = k < ascii.count ? ascii[k] : 0 }
+        out[lengthAt] = UInt8(ascii.count)
+        return out
+    }
+
+    /// Mismo cuerpo, pero para guardarlo en otra posición (el índice va dentro del cuerpo).
+    static func body(_ body: [UInt8], movedTo slot: Int) throws -> [UInt8] {
+        guard body.count > 64, body[0] == 0xB9, body[1] == 0x04, body[2] <= 0x01, body[3] == 0x00 else {
+            throw RenameError.unknownLayout("inicio: \(hex(body.prefix(16)))")
+        }
+        let oldIndexLength = body[4] == 0x80 ? 2 : 1
+        var index: [UInt8] = []
+        appendPresetIndex(slot, to: &index)
+        return [0xB9, 0x04, 0x01, 0x00] + index + body[(4 + oldIndexLength)...]
+    }
+
+    /// Posición guardada dentro de un cuerpo de preset.
+    static func slot(ofBody body: [UInt8]) -> Int? {
+        guard body.count > 6, body[0] == 0xB9, body[1] == 0x04 else { return nil }
+        return body[4] == 0x80 ? Int(body[5]) : Int(body[4])
+    }
+
+    /// Tone Model que usa el preset y, si lo trae (presets de IK/ToneNET), el amplificador real.
+    /// Visto en las capturas: `B9 02 BC 21 <33 bytes nombre del modelo> <largo> <n> BC 81 <largo16>`
+    /// y, al inicio de ese bloque, un texto de 43 bytes con el amp ("Diezel VH4", "Vox AC30"…).
+    struct ToneModelInfo: Codable, Equatable {
+        var model: String
+        var amp: String?
+    }
+
+    static func toneModelInfo(body b: [UInt8]) -> ToneModelInfo? {
+        let field: [UInt8] = [0xB9, 0x02, 0xBC, 0x21]
+        var j = 1600
+        while let p = TonexBytes.find(field, in: b, from: j), p < min(b.count - 60, 4000) {
+            let start = p + 4
+            let after = start + nameLength + 1          // byte de largo
+            if after + 3 < b.count, b[after + 2] == 0xBC, b[after + 3] == 0x81 {
+                let model = cString(b[start..<(start + nameLength + 1)])
+                var amp: String?
+                let blob = after + 6                    // BC 81 LL LL
+                if blob + 50 < b.count, let z = b[blob..<(blob + 8)].firstIndex(of: 0x2B) {
+                    let a = cString(b[(z + 1)..<(z + 44)])
+                    if a.count >= 3 { amp = a }
+                }
+                return model.isEmpty ? nil : ToneModelInfo(model: model, amp: amp)
+            }
+            j = p + 1
+        }
+        return nil
+    }
+
+    private static func cString(_ s: ArraySlice<UInt8>) -> String {
+        let bytes = s.prefix { $0 != 0 }.filter { $0 >= 0x20 && $0 < 0x7F }
+        return String(decoding: bytes, as: UTF8.self).trimmingCharacters(in: .whitespaces)
+    }
+
     static func setPreset(_ preset: Int) -> [UInt8] {
         var m: [UInt8] = [0xB9, 0x03, 0x81, 0x01, 0x02, 0x82, 0x04, 0x00, 0x80, 0x10, 0x03, 0xB9, 0x02]
         appendPresetIndex(preset, to: &m)
@@ -146,7 +263,7 @@ enum TonexPedal {
     }
 
     // Marcadores (ver usb_tonex.c)
-    private static let presetNameMarker: [UInt8] = [0xB9, 0x04, 0xB9, 0x02, 0xBC, 0x21]
+    static let presetNameMarker: [UInt8] = [0xB9, 0x04, 0xB9, 0x02, 0xBC, 0x21]
     private static let presetIndexMarker: [UInt8] = [0xB9, 0x04, 0x00, 0x00]
     private static let presetParamsMarker: [UInt8] = [0xBA, 0x03, 0xBA, 0x6D]
     private static let paramChangedMarker: [UInt8] = [0xB9, 0x04, 0x02, 0x00]
@@ -173,7 +290,9 @@ enum TonexPedal {
             return .state(currentPreset: Int(m[9]))
         case 0x0304, 0x0204:
             return .presetDetails(parsePresetDetails(m))
-        case 0x0303:
+        case 0x0203, 0x0303:
+            // Preset completo. En el Tonex Pedal llega como 0x0203 (B9 03 81 03 02 …),
+            // visto en la captura de TONEX Editor; 0x0303 queda por si otro firmware lo usa.
             return .presetDetailsFull(m)
         case 0x0206:
             if let cfg = parseGlobalConfig(m) { return .globalConfig(cfg) }
@@ -186,7 +305,7 @@ enum TonexPedal {
         }
     }
 
-    private static func parsePresetDetails(_ m: [UInt8]) -> PresetDetails {
+    static func parsePresetDetails(_ m: [UInt8]) -> PresetDetails {
         var details = PresetDetails(name: nil, presetIndex: nil, params: [])
 
         if let p = TonexBytes.find(presetNameMarker, in: m) {
