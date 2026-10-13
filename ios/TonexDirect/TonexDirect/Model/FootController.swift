@@ -9,11 +9,11 @@ struct MIDITrigger: Codable, Hashable {
     var number: UInt8       // nº de programa, de CC o de nota
 
     var label: String {
-        let ch = "canal \(channel + 1)"
+        let ch = trf("canal %@", channel + 1)
         switch kind {
         case .programChange: return "PC \(number) · \(ch)"
         case .controlChange: return "CC \(number) · \(ch)"
-        case .note: return "Nota \(number) · \(ch)"
+        case .note: return trf("Nota %@", number) + " · " + ch
         }
     }
 }
@@ -25,16 +25,19 @@ enum FootAction: Codable, Hashable {
     case slot(Int)                 // A / B / C del banco actual
     case toggle(EffectBlock)       // encender / apagar un bloque
     case tapTempo
+    case previousSong, nextSong    // setlist activo en Live
 
     var title: String {
         switch self {
-        case .previousPreset: return "Preset anterior"
-        case .nextPreset: return "Preset siguiente"
-        case .previousBank: return "Banco anterior"
-        case .nextBank: return "Banco siguiente"
-        case .slot(let i): return "Preset \(["A", "B", "C"][min(max(i, 0), 2)]) del banco"
-        case .toggle(let b): return "Encender/apagar \(b.title)"
+        case .previousPreset: return tr("Preset anterior")
+        case .nextPreset: return tr("Preset siguiente")
+        case .previousBank: return tr("Banco anterior")
+        case .nextBank: return tr("Banco siguiente")
+        case .slot(let i): return trf("Preset %@ del banco", ["A", "B", "C"][min(max(i, 0), 2)])
+        case .toggle(let b): return trf("Encender/apagar %@", b.title)
         case .tapTempo: return "Tap tempo"
+        case .previousSong: return tr("Canción anterior (setlist)")
+        case .nextSong: return tr("Canción siguiente (setlist)")
         }
     }
 
@@ -47,6 +50,8 @@ enum FootAction: Codable, Hashable {
         case .slot: return "square.grid.3x1.below.line.grid.1x2"
         case .toggle: return "power"
         case .tapTempo: return "metronome"
+        case .previousSong: return "backward.end"
+        case .nextSong: return "forward.end"
         }
     }
 
@@ -54,8 +59,39 @@ enum FootAction: Codable, Hashable {
     static var all: [FootAction] {
         [.previousPreset, .nextPreset, .previousBank, .nextBank, .slot(0), .slot(1), .slot(2)]
             + EffectBlock.allCases.filter { $0.enableIndex != nil }.map { .toggle($0) }
-            + [.tapTempo]
+            + [.tapTempo, .previousSong, .nextSong]
     }
+}
+
+/// A qué va un pedal de expresión (CC continuo 0…127).
+enum ExpressionTarget: String, Codable, CaseIterable, Identifiable {
+    case masterVolume, ampVolume, ampGain, delayMix, reverbMix
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .masterVolume: return tr("Volumen master")
+        case .ampVolume: return tr("Volumen del amp")
+        case .ampGain: return tr("Gain del amp")
+        case .delayMix: return tr("Mix del delay")
+        case .reverbMix: return tr("Mix de la reverb")
+        }
+    }
+    var systemImage: String {
+        switch self {
+        case .masterVolume, .ampVolume: return "speaker.wave.2"
+        case .ampGain: return "flame"
+        case .delayMix: return "repeat"
+        case .reverbMix: return "water.waves"
+        }
+    }
+}
+
+struct ExpressionBinding: Codable, Identifiable, Hashable {
+    var id = UUID()
+    var name: String
+    var trigger: MIDITrigger?
+    var target: ExpressionTarget
+    var inverted = false
 }
 
 extension EffectBlock: Codable {}
@@ -80,6 +116,12 @@ final class FootController {
     var learning: UUID?
 
     @ObservationIgnored private weak var store: ControllerStore?
+    @ObservationIgnored private weak var setlists: SetlistStore?
+    /// Pedales de expresión (el BlueBoard tiene 2 entradas).
+    private(set) var expressions: [ExpressionBinding]
+    /// Pedal de expresión esperando a que lo muevas.
+    var learningExpression: UUID?
+    private static let exprKey = "footExpressions.v1"
     @ObservationIgnored private var client = MIDIClientRef()
     @ObservationIgnored private var port = MIDIPortRef()
     @ObservationIgnored private let tapper = TapTempo()
@@ -88,21 +130,31 @@ final class FootController {
     private static let key = "footBindings.v1"
 
     init() {
+        if let data = UserDefaults.standard.data(forKey: Self.exprKey),
+           let saved = try? JSONDecoder().decode([ExpressionBinding].self, from: data) {
+            expressions = saved
+        } else {
+            expressions = [
+                ExpressionBinding(name: trf("Expresión %@", 1), target: .masterVolume),
+                ExpressionBinding(name: trf("Expresión %@", 2), target: .delayMix),
+            ]
+        }
         if let data = UserDefaults.standard.data(forKey: Self.key),
            let saved = try? JSONDecoder().decode([FootBinding].self, from: data) {
             bindings = saved
         } else {
             bindings = [
-                FootBinding(name: "Botón A", action: .previousPreset),
-                FootBinding(name: "Botón B", action: .nextPreset),
-                FootBinding(name: "Botón C", action: .toggle(.delay)),
-                FootBinding(name: "Botón D", action: .tapTempo),
+                FootBinding(name: trf("Botón %@", "A"), action: .previousPreset),
+                FootBinding(name: trf("Botón %@", "B"), action: .nextPreset),
+                FootBinding(name: trf("Botón %@", "C"), action: .toggle(.delay)),
+                FootBinding(name: trf("Botón %@", "D"), action: .tapTempo),
             ]
         }
     }
 
-    func attach(_ store: ControllerStore) {
+    func attach(_ store: ControllerStore, setlists: SetlistStore? = nil) {
         self.store = store
+        if let setlists { self.setlists = setlists }
         guard client == 0 else { return }
         MIDIClientCreateWithBlock("TONE" as CFString, &client) { [weak self] notif in
             let id = notif.pointee.messageID
@@ -136,7 +188,7 @@ final class FootController {
     // MARK: Edición de botones
 
     func add() {
-        bindings.append(FootBinding(name: "Botón \(bindings.count + 1)", action: .nextPreset))
+        bindings.append(FootBinding(name: trf("Botón %@", bindings.count + 1), action: .nextPreset))
         save()
     }
 
@@ -162,6 +214,22 @@ final class FootController {
 
     private func handle(_ trigger: MIDITrigger, value: UInt8) {
         lastMessage = trigger.kind == .controlChange ? "\(trigger.label) = \(value)" : trigger.label
+
+        // Pedales de expresión: CC continuo → parámetro.
+        if trigger.kind == .controlChange {
+            if let id = learningExpression, let i = expressions.firstIndex(where: { $0.id == id }) {
+                for j in expressions.indices where expressions[j].trigger == trigger { expressions[j].trigger = nil }
+                for j in bindings.indices where bindings[j].trigger == trigger { bindings[j].trigger = nil }
+                expressions[i].trigger = trigger
+                learningExpression = nil
+                saveExpressions(); save()
+                return
+            }
+            if let e = expressions.first(where: { $0.trigger == trigger }) {
+                applyExpression(e, value: value)
+                return
+            }
+        }
 
         if trigger.kind == .controlChange {
             // Momentáneo: 127 al pisar, 0 al soltar → solo cuenta el pisado.
@@ -203,8 +271,61 @@ final class FootController {
             store.setToggle(i, !store.isOn(i))
         case .tapTempo:
             if let bpm = tapper.tap() { store.setBPM(bpm) }
+        case .nextSong:
+            setlists?.next(store: store)
+        case .previousSong:
+            setlists?.previous(store: store)
         }
         lastAction = action.title
+    }
+
+    // MARK: Pedales de expresión
+
+    func addExpression() {
+        expressions.append(ExpressionBinding(name: trf("Expresión %@", expressions.count + 1), target: .masterVolume))
+        saveExpressions()
+    }
+
+    func removeExpression(_ id: UUID) {
+        expressions.removeAll { $0.id == id }
+        if learningExpression == id { learningExpression = nil }
+        saveExpressions()
+    }
+
+    func setExpression(_ id: UUID, target: ExpressionTarget? = nil, inverted: Bool? = nil) {
+        guard let i = expressions.firstIndex(where: { $0.id == id }) else { return }
+        if let target { expressions[i].target = target }
+        if let inverted { expressions[i].inverted = inverted }
+        saveExpressions()
+    }
+
+    /// Índice del parámetro al que apunta (algunos dependen del modelo de delay/reverb activo).
+    private func parameterIndex(_ t: ExpressionTarget, store: ControllerStore) -> Int? {
+        switch t {
+        case .masterVolume: return TonexParam.masterVolume
+        case .ampVolume: return TonexParam.ampVolume
+        case .ampGain: return TonexParam.ampGain
+        case .delayMix:
+            let model = Int(store.value(TonexParam.delayModel).rounded())
+            return TonexCatalog.delayParams(model: model).params.first { $0.label == "Mix" }?.index
+        case .reverbMix:
+            let model = Int(store.value(TonexParam.reverbModel).rounded())
+            return TonexParam.reverbBlockStart(model: model) + 3
+        }
+    }
+
+    private func applyExpression(_ e: ExpressionBinding, value: UInt8) {
+        guard let store, store.state == .ready, let index = parameterIndex(e.target, store: store),
+              store.supports(index) else { return }
+        var f = Double(value) / 127
+        if e.inverted { f = 1 - f }
+        let r = store.range(index)
+        store.setValue(index, r.lowerBound + (r.upperBound - r.lowerBound) * f)
+        lastAction = "\(e.target.title): \(Int((f * 100).rounded())) %"
+    }
+
+    private func saveExpressions() {
+        if let data = try? JSONEncoder().encode(expressions) { UserDefaults.standard.set(data, forKey: Self.exprKey) }
     }
 
     // MARK: Lectura de MIDI (UMP, MIDI 1.0)

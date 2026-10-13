@@ -9,9 +9,9 @@ enum AppSection: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .edit: return "Editar"
+        case .edit: return tr("Editar")
         case .live: return "Live"
-        case .settings: return "Ajustes"
+        case .settings: return tr("Ajustes")
         }
     }
 
@@ -148,7 +148,7 @@ struct PresetSidebar: View {
             library.reload()
             renaming = false
             switch result {
-            case .done: renameMessage = "Listo: el preset ahora se llama “\(name.trimmingCharacters(in: .whitespaces))” en el pedal."
+            case .done: renameMessage = trf("Listo: el preset ahora se llama “%@” en el pedal.", name.trimmingCharacters(in: .whitespaces))
             case .failed(let why): renameMessage = why
             }
         }
@@ -160,11 +160,11 @@ struct PresetSidebar: View {
         Task { @MainActor in
             defer { renaming = false }
             guard let saved = await store.makeBackup(of: id), let data = try? saved.encoded() else {
-                renameMessage = "El pedal no respondió; intenta de nuevo."; return
+                renameMessage = tr("El pedal no respondió; intenta de nuevo."); return
             }
             let url = FileManager.default.temporaryDirectory.appendingPathComponent(saved.fileName)
             do { try data.write(to: url, options: .atomic) } catch {
-                renameMessage = "No pude preparar el archivo."; return
+                renameMessage = tr("No pude preparar el archivo."); return
             }
             try? library.save(saved)            // y una copia en "Mis presets"
             library.reload()
@@ -181,7 +181,7 @@ struct PresetSidebar: View {
             library.reload()
             renaming = false
             switch r {
-            case .done: renameMessage = "Listo: “\(p.name)” quedó en \(store.presets[slot].label)."
+            case .done: renameMessage = trf("Listo: “%@” quedó en %@.", p.name, store.presets[slot].label)
             case .failed(let why): renameMessage = why
             }
         }
@@ -195,7 +195,7 @@ struct PresetSidebar: View {
             library.reload()
             renaming = false
             switch result {
-            case .done: renameMessage = "Listo: se intercambiaron \(store.presets[a].label) y \(store.presets[b].label)."
+            case .done: renameMessage = trf("Listo: se intercambiaron %@ y %@.", store.presets[a].label, store.presets[b].label)
             case .failed(let why): renameMessage = why
             }
         }
@@ -279,10 +279,10 @@ struct PresetSidebar: View {
                     renamingFor = nil
                 }
             } message: {
-                Text("Se guarda directo en el pedal. Antes se hace un respaldo en “Mis presets”. Máximo \(TonexPedal.nameLength) caracteres, sin acentos ni ñ. Si es el preset que suena, también se guardan los cambios de perillas que tengas.")
+                Text(trf("Se guarda directo en el pedal. Antes se hace un respaldo en “Mis presets”. Máximo %@ caracteres, sin acentos ni ñ. Si es el preset que suena, también se guardan los cambios de perillas que tengas.", TonexPedal.nameLength))
             }
             .sheet(item: Binding(get: { swappingFrom.map(PickTarget.init) }, set: { swappingFrom = $0?.id })) { from in
-                SlotPickerSheet(title: "Intercambiar \(store.presets[from.id].label) con…", exclude: from.id) { to in
+                SlotPickerSheet(title: trf("Intercambiar %@ con…", store.presets[from.id].label), exclude: from.id) { to in
                     swap(from.id, to)
                 }
             }
@@ -296,7 +296,7 @@ struct PresetSidebar: View {
                 defer { if access { url.stopAccessingSecurityScopedResource() } }
                 let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601
                 guard let data = try? Data(contentsOf: url), let p = try? d.decode(SavedPreset.self, from: data) else {
-                    renameMessage = "Ese archivo no es un preset de TONE."; return
+                    renameMessage = tr("Ese archivo no es un preset de TONE."); return
                 }
                 library.importFiles([url])          // también queda en "Mis presets"
                 library.lastImport = nil
@@ -311,14 +311,14 @@ struct PresetSidebar: View {
                                 isPresented: Binding(get: { pendingLoad != nil }, set: { if !$0 { pendingLoad = nil } }),
                                 titleVisibility: .visible) {
                 if let pl = pendingLoad {
-                    Button("Cargar “\(pl.preset.name)” en \(store.presets[pl.slot].label)", role: .destructive) {
+                    Button(trf("Cargar “%@” en %@", pl.preset.name, store.presets[pl.slot].label), role: .destructive) {
                         importInto(pl.preset, slot: pl.slot)
                     }
                 }
                 Button("Cancelar", role: .cancel) { pendingLoad = nil }
             } message: {
                 if let pl = pendingLoad {
-                    Text("Se reemplaza “\(store.presets[pl.slot].name)” por el preset completo, con su Tone Model. Lo de ahora se guarda antes en “Mis presets”.")
+                    Text(trf("Se reemplaza “%@” por el preset completo, con su Tone Model. Lo de ahora se guarda antes en “Mis presets”.", store.presets[pl.slot].name))
                 }
             }
             .alert("Renombrar", isPresented: Binding(get: { renameMessage != nil }, set: { if !$0 { renameMessage = nil } })) {
@@ -392,7 +392,7 @@ struct BankHeader: View {
         }
         .padding(.vertical, 2)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Banco \(bank)")
+        .accessibilityLabel(trf("Banco %@", bank))
         .accessibilityAddTraits(.isHeader)
     }
 }
@@ -437,7 +437,7 @@ struct ExportReadySheet: View {
                 .buttonStyle(.bordered)
             }
             .controlSize(.large)
-            Text(savedTo.map { "Guardado en “\($0)”." } ?? "También quedó una copia en “Mis presets”.")
+            Text(savedTo.map { trf("Guardado en “%@”.", $0) } ?? tr("También quedó una copia en “Mis presets”."))
                 .font(.caption).foregroundStyle(.secondary)
             Button("Listo") { dismiss() }
         }

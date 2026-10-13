@@ -7,12 +7,27 @@ import UIKit
 /// - Fila de footswitches para encender/apagar los efectos.
 struct LiveView: View {
     @Environment(ControllerStore.self) private var store
+    @Environment(SetlistStore.self) private var setlists
+    /// Candado: bloquea la pantalla para que un roce no cambie nada (el pedal de pie sigue funcionando).
+    @AppStorage("live.locked") private var locked = false
+    @State private var lockHint = false
+    @State private var editingSetlists = false
 
     private let switches: [EffectBlock] = [.gate, .comp, .mod, .delay, .reverb]
 
+    private func step(_ d: Int) {
+        if setlists.active != nil {
+            if d < 0 { setlists.previous(store: store) } else { setlists.next(store: store) }
+        } else {
+            if d < 0 { store.previousPreset() } else { store.nextPreset() }
+        }
+    }
+
     var body: some View {
         GeometryReader { geo in
-            VStack(spacing: 14) {
+            VStack(spacing: 10) {
+                topBar
+                VStack(spacing: 14) {
                 HStack(spacing: 14) {
                     LivePresetButton(direction: -1)
                         .frame(width: max(110, geo.size.width * 0.12))
@@ -28,10 +43,99 @@ struct LiveView: View {
                 }
                 .frame(height: min(150, max(100, geo.size.height * 0.2)))
                 .disabled(store.state != .ready)
+                }
+                .allowsHitTesting(!locked)
+                .opacity(locked ? 0.92 : 1)
             }
             .padding(16)
         }
         .background(ScreenBackgroundView(.live))
+        .sheet(isPresented: $editingSetlists) {
+            NavigationStack {
+                Form { SetlistsSection() }
+                    .navigationTitle("Setlists")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Listo") { editingSetlists = false } } }
+            }
+        }
+    }
+
+    // MARK: Barra de arriba: setlist y candado
+
+    private var topBar: some View {
+        HStack(spacing: 12) {
+            Menu {
+                Button { setlists.activate(nil, store: store) } label: {
+                    Label("Sin setlist (presets en orden)", systemImage: setlists.active == nil ? "checkmark" : "list.number")
+                }
+                if !setlists.setlists.isEmpty { Divider() }
+                ForEach(setlists.setlists) { s in
+                    Button { setlists.activate(s.id, store: store) } label: {
+                        Label(s.name + " (\(s.songs.count))", systemImage: setlists.activeID == s.id ? "checkmark" : "music.note.list")
+                    }
+                }
+                Divider()
+                Button { editingSetlists = true } label: { Label("Editar setlists…", systemImage: "pencil") }
+            } label: {
+                Label(setlists.active?.name ?? "Setlist", systemImage: "music.note.list")
+                    .font(.headline)
+                    .padding(.horizontal, 14).padding(.vertical, 8)
+                    .background(Capsule().fill(Color.black.opacity(0.45)))
+            }
+            .disabled(locked)
+
+            if let a = setlists.active, let song = setlists.currentSong {
+                Text(trf("Canción %@ de %@", setlists.songIndex + 1, a.songs.count))
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                if let next = setlists.song(offset: 1) {
+                    Text(trf("Sigue: %@", next.title))
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                } else if !song.title.isEmpty {
+                    Text("Última").font(.callout).foregroundStyle(.secondary)
+                }
+            }
+            Spacer()
+            if lockHint {
+                Text("Mantén presionado para desbloquear")
+                    .font(.callout.weight(.semibold))
+                    .transition(.opacity)
+            }
+            lockButton
+        }
+        .frame(height: 44)
+        .shadow(color: .black.opacity(0.6), radius: 6)
+        .animation(.easeInOut(duration: 0.2), value: lockHint)
+    }
+
+    private var lockButton: some View {
+        Image(systemName: locked ? "lock.fill" : "lock.open")
+            .font(.title2.weight(.semibold))
+            .foregroundStyle(locked ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
+            .frame(width: 52, height: 44)
+            .background(Capsule().fill(locked ? Color.orange.opacity(0.22) : Color.black.opacity(0.45)))
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if locked {
+                    // con candado, un toque no basta: así no se quita por accidente
+                    lockHint = true
+                    Task { try? await Task.sleep(for: .seconds(2)); lockHint = false }
+                } else {
+                    UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+                    locked = true
+                }
+            }
+            .onLongPressGesture(minimumDuration: 0.8) {
+                guard locked else { return }
+                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                locked = false
+                lockHint = false
+            }
+            .accessibilityLabel(locked ? "Pantalla bloqueada" : "Bloquear pantalla")
+            .accessibilityHint(locked ? "Mantén presionado para desbloquear" : "Bloquea los toques en Live; el pedal de pie sigue funcionando")
+            .accessibilityAction(named: locked ? "Desbloquear" : "Bloquear") { locked.toggle() }
     }
 
     // MARK: Preset al centro
@@ -48,6 +152,13 @@ struct LiveView: View {
                         .scaledToFit()
                         .frame(maxHeight: height * (skin.isPedal ? 0.34 : 0.4))
                         .shadow(color: .black.opacity(0.7), radius: 18, y: 10)
+                }
+                if setlists.active != nil, let song = setlists.currentSong {
+                    Text(song.title)
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                 }
                 Text(store.currentPresetInfo?.label ?? "–")
                     .font(.system(size: 56, weight: .heavy, design: .rounded))
@@ -73,6 +184,7 @@ struct LiveView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.snappy(duration: 0.22), value: store.currentPreset)
+        .animation(.snappy(duration: 0.22), value: setlists.songIndex)
         .contentShape(Rectangle())
         .gesture(
             DragGesture(minimumDistance: 30)
@@ -80,10 +192,10 @@ struct LiveView: View {
                     guard store.state == .ready, abs(v.translation.width) > abs(v.translation.height) else { return }
                     if v.translation.width < -80 {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                        store.nextPreset()
+                        step(+1)
                     } else if v.translation.width > 80 {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                        store.previousPreset()
+                        step(-1)
                     }
                 }
         )
@@ -97,7 +209,11 @@ struct LiveView: View {
 /// Botón lateral gigante: flecha + número y nombre del preset al que vas a ir.
 struct LivePresetButton: View {
     @Environment(ControllerStore.self) private var store
+    @Environment(SetlistStore.self) private var setlists
     let direction: Int
+
+    /// Con setlist activo: la canción a la que vas.
+    private var song: Song? { setlists.active != nil ? setlists.song(offset: direction) : nil }
 
     private var target: Preset? {
         guard store.maxPresets > 0 else { return nil }
@@ -109,7 +225,11 @@ struct LivePresetButton: View {
     var body: some View {
         Button {
             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-            if direction < 0 { store.previousPreset() } else { store.nextPreset() }
+            if setlists.active != nil {
+                if direction < 0 { setlists.previous(store: store) } else { setlists.next(store: store) }
+            } else {
+                if direction < 0 { store.previousPreset() } else { store.nextPreset() }
+            }
         } label: {
             // Solo un círculo con la flecha y el preset destino; toda la columna sigue
             // siendo tocable (útil en el escenario) pero ya no se ve un recuadro enorme.
@@ -119,7 +239,24 @@ struct LivePresetButton: View {
                     .frame(width: 72, height: 72)
                     .background(Circle().fill(Color.black.opacity(0.45)))
                     .overlay(Circle().stroke(Color.white.opacity(0.15)))
-                if let t = target {
+                if setlists.active != nil {
+                    if let s = song {
+                        Text(s.title)
+                            .font(.callout.weight(.bold))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.7)
+                            .padding(.horizontal, 4)
+                        if store.presets.indices.contains(s.slot) {
+                            Text(store.presets[s.slot].label)
+                                .font(.caption.weight(.heavy).monospacedDigit())
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        Text(direction < 0 ? "Inicio" : "Fin").font(.caption).foregroundStyle(.secondary)
+                    }
+                } else if let t = target {
                     Text(t.label)
                         .font(.headline.weight(.heavy).monospacedDigit())
                         .foregroundStyle(.secondary)
@@ -139,7 +276,7 @@ struct LivePresetButton: View {
         .buttonStyle(LivePressStyle())
         .disabled(store.state != .ready)
         .accessibilityLabel(direction < 0 ? "Preset anterior" : "Preset siguiente")
-        .accessibilityValue(target.map { "Banco \($0.bank) \($0.slot), \($0.name)" } ?? "")
+        .accessibilityValue(target.map { trf("Banco %@ %@, %@", $0.bank, $0.slot, $0.name) } ?? "")
     }
 }
 

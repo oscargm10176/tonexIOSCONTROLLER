@@ -8,19 +8,28 @@ struct TonexDirectApp: App {
     @State private var foot = FootController()
     /// Presets guardados en el iPad.
     @State private var library = PresetLibrary()
+    /// Setlists para Live.
+    @State private var setlists = SetlistStore()
+    /// Idioma (Español / English), cambia al instante.
+    @State private var language = LanguageStore()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                // Rehacer toda la interfaz al cambiar de idioma (los datos del pedal se quedan).
+                .id(language.code)
+                .environment(\.locale, language.locale)
+                .environment(language)
                 .environment(store)
                 .environment(foot)
                 .environment(library)
+                .environment(setlists)
                 .preferredColorScheme(.dark)
                 .tint(.orange)
                 .onAppear {
                     store.connect()
-                    foot.attach(store)
+                    foot.attach(store, setlists: setlists)
                 }
                 // Un .tonepreset abierto desde Archivos, AirDrop, Mail…: se importa a "Mis presets".
                 .onOpenURL { url in

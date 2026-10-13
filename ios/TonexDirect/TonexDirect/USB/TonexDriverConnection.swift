@@ -44,10 +44,10 @@ final class TonexDriverConnection: @unchecked Sendable {
 
         var description: String {
             switch self {
-            case .serviceNotFound: return "No encuentro el driver del Tonex"
-            case .open(let kr): return "No pude abrir el driver (\(Self.hex(kr)))"
-            case let .call(op, kr): return "Falló la \(op) con el driver (\(Self.hex(kr)))"
-            case .notOpen: return "El driver no está abierto"
+            case .serviceNotFound: return tr("No encuentro el driver del Tonex")
+            case .open(let kr): return trf("No pude abrir el driver (%@)", Self.hex(kr))
+            case let .call(op, kr): return trf("Falló la %@ con el driver (%@)", tr(op), Self.hex(kr))
+            case .notOpen: return tr("El driver no está abierto")
             }
         }
 

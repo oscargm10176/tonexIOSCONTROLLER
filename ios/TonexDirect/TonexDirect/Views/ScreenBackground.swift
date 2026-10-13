@@ -9,9 +9,9 @@ enum LiveBackgroundSource: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .studio: return "Estudio"
-        case .stage: return "Escenario"
-        case .custom: return "Mi foto"
+        case .studio: return tr("Estudio")
+        case .stage: return tr("Escenario")
+        case .custom: return tr("Mi foto")
         }
     }
     var asset: String? {
@@ -27,7 +27,7 @@ enum LiveBackgroundSource: String, CaseIterable, Identifiable {
 enum BackgroundScope: String {
     case live, edit
 
-    var title: String { self == .live ? "Fondo del modo Live" : "Fondo del modo Editar" }
+    var title: String { self == .live ? tr("Fondo del modo Live") : tr("Fondo del modo Editar") }
     var defaultSource: LiveBackgroundSource { self == .live ? .studio : .stage }
     var defaultDim: Double { self == .live ? 0.5 : 0.6 }
     /// Prefijo de las claves (Live conserva las que ya tenía).
@@ -172,13 +172,13 @@ struct BackgroundSettings: View {
             Task {
                 do {
                     guard let data = try await item.loadTransferable(type: Data.self),
-                          let image = UIImage(data: data) else { error = "No se pudo abrir esa imagen."; return }
+                          let image = UIImage(data: data) else { error = tr("No se pudo abrir esa imagen."); return }
                     try scope.saveCustom(image)
                     error = nil
                     source = LiveBackgroundSource.custom.rawValue
                     customVersion += 1
                 } catch {
-                    self.error = "No se pudo guardar la imagen."
+                    self.error = tr("No se pudo guardar la imagen.")
                 }
                 pick = nil
             }

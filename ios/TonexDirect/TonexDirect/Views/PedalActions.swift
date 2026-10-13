@@ -43,7 +43,7 @@ struct SlotPickerSheet: View {
                     }
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle(tr(title))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancelar") { dismiss() } } }
         }
@@ -66,7 +66,7 @@ struct SaveToPedalButton: View {
         }
         .disabled(store.state != .ready || busy || store.currentPreset == nil)
         .confirmationDialog("¿Guardar en el pedal?", isPresented: $confirming, titleVisibility: .visible) {
-            Button("Guardar \(store.currentPresetInfo.map { "\($0.label) · \($0.name)" } ?? "")") { save() }
+            Button(trf("Guardar %@", store.currentPresetInfo.map { "\($0.label) · \($0.name)" } ?? "")) { save() }
             Button("Cancelar", role: .cancel) {}
         } message: {
             Text("Los cambios de perillas y efectos de este preset quedan guardados en el pedal. Antes se guarda un respaldo en “Mis presets”.")
@@ -85,7 +85,7 @@ struct SaveToPedalButton: View {
             library.reload()
             busy = false
             switch r {
-            case .done: message = "Listo: guardado en el pedal."
+            case .done: message = tr("Listo: guardado en el pedal.")
             case .failed(let why): message = why
             }
         }

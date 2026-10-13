@@ -69,7 +69,7 @@ struct SavePresetsSheet: View {
                     Button("Cerrar") { task?.cancel(); dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(selected.count > 1 ? "Guardar \(selected.count)" : "Guardar") { start() }
+                    Button(selected.count > 1 ? trf("Guardar %@", selected.count) : tr("Guardar")) { start() }
                         .disabled(selected.isEmpty || progress != nil || store.state != .ready)
                 }
             }
@@ -83,7 +83,7 @@ struct SavePresetsSheet: View {
         if let p = progress {
             VStack(spacing: 6) {
                 ProgressView(value: Double(p.done), total: Double(max(p.total, 1))).tint(.orange)
-                Text("Leyendo del pedal \(p.done) de \(p.total)…").font(.caption.monospacedDigit())
+                Text(trf("Leyendo del pedal %@ de %@…", p.done, p.total)).font(.caption.monospacedDigit())
             }
             .padding().background(.bar)
         } else if let result {
@@ -125,7 +125,7 @@ struct SavePresetsSheet: View {
             guard !Task.isCancelled else { return }
             result = saved == 0
                 ? "El pedal no respondió. Revisa la conexión e intenta de nuevo."
-                : (saved == 1 ? "Guardado en Mis presets" : "\(saved) presets guardados en Mis presets")
+                : (saved == 1 ? tr("Guardado en Mis presets") : trf("%@ presets guardados en Mis presets", saved))
         }
     }
 }
@@ -220,21 +220,21 @@ struct PresetLibraryView: View {
                           contentType: exportDoc?.contentType ?? .tonePreset,
                           defaultFilename: exportDoc?.defaultName) { r in
                 switch r {
-                case .success(let url): message = "Guardado en “\(url.lastPathComponent)”."
-                case .failure(let e): message = "No se guardó: \(e.localizedDescription)"
+                case .success(let url): message = trf("Guardado en “%@”.", url.lastPathComponent)
+                case .failure(let e): message = trf("No se guardó: %@", e.localizedDescription)
                 }
                 exportDoc = nil
                 selecting = false; selection = []
             }
             .onAppear { library.reload() }
             .sheet(item: $loading) { e in
-                SlotPickerSheet(title: "Cargar “\(e.name)” en…") { slot in confirm = (e, slot) }
+                SlotPickerSheet(title: trf("Cargar “%@” en…", e.name)) { slot in confirm = (e, slot) }
             }
             .confirmationDialog("¿Reemplazar este preset del pedal?",
                                 isPresented: Binding(get: { confirm != nil }, set: { if !$0 { confirm = nil } }),
                                 titleVisibility: .visible) {
                 if let c = confirm {
-                    Button("Reemplazar \(store.presets[c.slot].label) · \(store.presets[c.slot].name)", role: .destructive) {
+                    Button(trf("Reemplazar %@ · %@", store.presets[c.slot].label, store.presets[c.slot].name), role: .destructive) {
                         load(c.entry, into: c.slot)
                     }
                 }
@@ -242,7 +242,7 @@ struct PresetLibraryView: View {
             } message: {
                 Text("Se carga el preset completo, con su Tone Model. Lo que hay ahora en esa posición se guarda antes en “Mis presets”.")
             }
-            .confirmationDialog(confirmDelete.count == 1 ? "¿Borrar “\(confirmDelete.first?.name ?? "")”?" : "¿Borrar \(confirmDelete.count) presets?",
+            .confirmationDialog(confirmDelete.count == 1 ? trf("¿Borrar “%@”?", confirmDelete.first?.name ?? "") : trf("¿Borrar %@ presets?", confirmDelete.count),
                                 isPresented: Binding(get: { !confirmDelete.isEmpty }, set: { if !$0 { confirmDelete = [] } }),
                                 titleVisibility: .visible) {
                 Button("Borrar", role: .destructive) {
@@ -323,7 +323,7 @@ struct PresetLibraryView: View {
                 selection = selection.count == library.entries.count ? [] : Set(library.entries.map(\.url))
             }
             Spacer()
-            Text(selection.isEmpty ? "Elige presets" : "\(selection.count) seleccionados")
+            Text(selection.isEmpty ? tr("Elige presets") : trf("%@ seleccionados", selection.count))
                 .font(.callout).foregroundStyle(.secondary)
             Spacer()
             ShareLink(items: selectedEntries.map(\.url)) { Label("Compartir", systemImage: "square.and.arrow.up") }
@@ -366,7 +366,7 @@ struct PresetLibraryView: View {
 
     private func load(_ e: PresetLibrary.Entry, into slot: Int) {
         confirm = nil
-        guard let saved = library.load(e) else { message = "No pude abrir ese archivo."; return }
+        guard let saved = library.load(e) else { message = tr("No pude abrir ese archivo."); return }
         busy = true
         Task { @MainActor in
             if let backup = await store.makeBackup(of: slot) { try? library.save(backup) }
@@ -374,7 +374,7 @@ struct PresetLibraryView: View {
             library.reload()
             busy = false
             switch r {
-            case .done: message = "Listo: “\(saved.name)” quedó en \(store.presets[slot].label)."
+            case .done: message = trf("Listo: “%@” quedó en %@.", saved.name, store.presets[slot].label)
             case .failed(let why): message = why
             }
         }

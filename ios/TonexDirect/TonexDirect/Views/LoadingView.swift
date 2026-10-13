@@ -91,10 +91,10 @@ struct LoadingView: View {
 
     private var title: String {
         switch store.state {
-        case .idle, .waitingForPedal: return "Conecta el Tonex Pedal por USB-C"
-        case .connecting: return "Conectando con el pedal…"
-        case .syncing: return "Leyendo tus presets…"
-        case .ready: return "Listo"
+        case .idle, .waitingForPedal: return tr("Conecta el Tonex Pedal por USB-C")
+        case .connecting: return tr("Conectando con el pedal…")
+        case .syncing: return tr("Leyendo tus presets…")
+        case .ready: return tr("Listo")
         case .failed(let m): return m
         }
     }
@@ -102,9 +102,9 @@ struct LoadingView: View {
     private var hint: String? {
         switch store.state {
         case .waitingForPedal:
-            return "Si ya está conectado, activa el driver en Ajustes › General › Drivers (o en los ajustes de esta app)."
+            return tr("Si ya está conectado, activa el driver en Ajustes › General › Drivers (o en los ajustes de esta app).")
         case .failed:
-            return "Se reintenta solo en unos segundos. Si sigue, desconecta y vuelve a conectar el pedal."
+            return tr("Se reintenta solo en unos segundos. Si sigue, desconecta y vuelve a conectar el pedal.")
         default:
             return nil
         }
@@ -117,7 +117,7 @@ struct LoadingView: View {
             VStack(spacing: 8) {
                 ProgressView(value: Double(done), total: Double(max(total, 1)))
                     .tint(.orange)
-                Text("\(done) de \(total)")
+                Text(trf("%@ de %@", done, total))
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
             }

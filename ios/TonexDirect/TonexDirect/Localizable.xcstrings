@@ -1,0 +1,3694 @@
+{
+  "sourceLanguage" : "es",
+  "strings" : {
+    "¿Borrar “%@”?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete “%@”?"
+          }
+        }
+      }
+    },
+    "¿Borrar %@ presets?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %@ presets?"
+          }
+        }
+      }
+    },
+    "¿Guardar en el pedal?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to the pedal?"
+          }
+        }
+      }
+    },
+    "¿Reemplazar este preset del pedal?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace this preset on the pedal?"
+          }
+        }
+      }
+    },
+    "¿Restaurar este respaldo en el pedal?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore this backup to the pedal?"
+          }
+        }
+      }
+    },
+    "·" : {
+
+    },
+    "“%@” no es un preset de TONE." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” isn't a TONE preset."
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ de %@…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %@ of %@…"
+          }
+        }
+      }
+    },
+    "%@ %lld" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld"
+          }
+        }
+      }
+    },
+    "%@ archivos no son presets de TONE." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ files aren't TONE presets."
+          }
+        }
+      }
+    },
+    "%@ bytes · %@ tramas · %@ inválidas" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bytes · %@ frames · %@ invalid"
+          }
+        }
+      }
+    },
+    "%@ canciones" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ songs"
+          }
+        }
+      }
+    },
+    "%@ de %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ of %@"
+          }
+        }
+      }
+    },
+    "%@ presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ presets"
+          }
+        }
+      }
+    },
+    "%@ presets guardados en Mis presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ presets saved to My presets"
+          }
+        }
+      }
+    },
+    "%@ seleccionados" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ selected"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld BPM" : {
+
+    },
+    "Abrir Ajustes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
+    "Abrir Ajustes del iPad" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open iPad Settings"
+          }
+        }
+      }
+    },
+    "Abrir los ajustes de la app" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the app's settings"
+          }
+        }
+      }
+    },
+    "Acerca de TONE" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About TONE"
+          }
+        }
+      }
+    },
+    "Actual" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current"
+          }
+        }
+      }
+    },
+    "Afinación de referencia" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tuning reference"
+          }
+        }
+      }
+    },
+    "Agregar botón" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add button"
+          }
+        }
+      }
+    },
+    "Agregar canción" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add song"
+          }
+        }
+      }
+    },
+    "Agregar pedal de expresión" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add expression pedal"
+          }
+        }
+      }
+    },
+    "Ajustes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Amplificador" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amplifier"
+          }
+        }
+      }
+    },
+    "Amplificadores" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amps"
+          }
+        }
+      }
+    },
+    "Antes del amp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before the amp"
+          }
+        }
+      }
+    },
+    "Apagado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off"
+          }
+        }
+      }
+    },
+    "Aplicar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apply"
+          }
+        }
+      }
+    },
+    "Aprender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn"
+          }
+        }
+      }
+    },
+    "Aún no hay presets guardados" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No saved presets yet"
+          }
+        }
+      }
+    },
+    "Bajar tempo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lower tempo"
+          }
+        }
+      }
+    },
+    "BANCO" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BANK"
+          }
+        }
+      }
+    },
+    "Banco " : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bank "
+          }
+        }
+      }
+    },
+    "Banco %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bank %@"
+          }
+        }
+      }
+    },
+    "Banco %@ %@, %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bank %@ %@, %@"
+          }
+        }
+      }
+    },
+    "Banco anterior" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous bank"
+          }
+        }
+      }
+    },
+    "Banco siguiente" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next bank"
+          }
+        }
+      }
+    },
+    "Bloquea los toques en Live; el pedal de pie sigue funcionando" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocks touches in Live; the foot controller keeps working"
+          }
+        }
+      }
+    },
+    "Bloquear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock"
+          }
+        }
+      }
+    },
+    "Bloquear pantalla" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock screen"
+          }
+        }
+      }
+    },
+    "Borrar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "Boss amarillo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yellow Boss"
+          }
+        }
+      }
+    },
+    "Boss negro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black Boss"
+          }
+        }
+      }
+    },
+    "Boss plata" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silver Boss"
+          }
+        }
+      }
+    },
+    "Botón %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Button %@"
+          }
+        }
+      }
+    },
+    "BPM" : {
+
+    },
+    "Buscar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
+    },
+    "Buscar por nombre, amp o banco" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search by name, amp or bank"
+          }
+        }
+      }
+    },
+    "Buscar preset" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search presets"
+          }
+        }
+      }
+    },
+    "Bypass de cab sim" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cab sim bypass"
+          }
+        }
+      }
+    },
+    "Cada preset del respaldo se escribe en su posición original, con su Tone Model, y reemplaza lo que haya ahí. Recomendado: respaldar antes lo que tiene el pedal ahora (tarda un minuto más)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each preset in the backup is written to its original slot, with its Tone Model, replacing what's there. Recommended: back up what's on the pedal first (takes one more minute)."
+          }
+        }
+      }
+    },
+    "Cada preset se guarda completo (nombre, perillas y Tone Model) como .tonepreset. La carpeta también queda en este iPad, en Archivos › En mi iPad › TONE › Respaldos. Tarda alrededor de un minuto." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each preset is saved complete (name, knobs and Tone Model) as a .tonepreset. The folder also stays on this iPad, in Files › On My iPad › TONE › Respaldos. It takes about a minute."
+          }
+        }
+      }
+    },
+    "Cambiar mi foto…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change my photo…"
+          }
+        }
+      }
+    },
+    "canal %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "channel %@"
+          }
+        }
+      }
+    },
+    "Cancelar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Canción" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song"
+          }
+        }
+      }
+    },
+    "Canción %@ de %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song %@ of %@"
+          }
+        }
+      }
+    },
+    "Canción anterior (setlist)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous song (setlist)"
+          }
+        }
+      }
+    },
+    "Canción siguiente (setlist)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next song (setlist)"
+          }
+        }
+      }
+    },
+    "Canciones" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Songs"
+          }
+        }
+      }
+    },
+    "Cargando en el pedal…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading to the pedal…"
+          }
+        }
+      }
+    },
+    "Cargar “%@” en %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load “%@” into %@"
+          }
+        }
+      }
+    },
+    "Cargar “%@” en…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load “%@” into…"
+          }
+        }
+      }
+    },
+    "Cargar al pedal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load to pedal"
+          }
+        }
+      }
+    },
+    "Cargar al pedal…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load to pedal…"
+          }
+        }
+      }
+    },
+    "Cerrar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "Cerrar aviso" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss"
+          }
+        }
+      }
+    },
+    "Compartir" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        }
+      }
+    },
+    "Compartir…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share…"
+          }
+        }
+      }
+    },
+    "Compresor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compressor"
+          }
+        }
+      }
+    },
+    "Con más oscuro se leen mejor las perillas y los valores." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Darker makes the knobs and values easier to read."
+          }
+        }
+      }
+    },
+    "Condensador" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condenser"
+          }
+        }
+      }
+    },
+    "Conecta el pedal de expresión al BlueBoard, toca “Aprender” y muévelo de punta a punta. Si sube al revés, activa “Invertir”." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plug the expression pedal into the BlueBoard, tap “Learn” and move it from heel to toe. If it goes the wrong way, turn on “Invert”."
+          }
+        }
+      }
+    },
+    "Conecta el pedal por USB para editar los efectos." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect the pedal via USB to edit the effects."
+          }
+        }
+      }
+    },
+    "Conecta el Tonex Pedal al puerto USB-C del iPad (cable USB-C a USB-B, o adaptador). La primera vez, activa el driver en Ajustes › General › Drivers." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect the Tonex Pedal to the iPad's USB-C port (USB-C to USB-B cable, or an adapter). The first time, enable the driver in Settings › General › Drivers."
+          }
+        }
+      }
+    },
+    "Conecta el Tonex Pedal por USB-C" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect the Tonex Pedal via USB-C"
+          }
+        }
+      }
+    },
+    "Conectado por USB" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected via USB"
+          }
+        }
+      }
+    },
+    "Conectando con el pedal…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecting to the pedal…"
+          }
+        }
+      }
+    },
+    "Conectar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect"
+          }
+        }
+      }
+    },
+    "Conectar pedal Bluetooth…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Bluetooth pedal…"
+          }
+        }
+      }
+    },
+    "Conexión USB" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB connection"
+          }
+        }
+      }
+    },
+    "consulta de estado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "status query"
+          }
+        }
+      }
+    },
+    "Copiar registro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy log"
+          }
+        }
+      }
+    },
+    "Crear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        }
+      }
+    },
+    "Deja el pedal conectado. Puedes seguir tocando; no se cambia nada en el pedal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the pedal connected. You can keep playing; nothing changes on the pedal."
+          }
+        }
+      }
+    },
+    "Desbloquear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
+          }
+        }
+      }
+    },
+    "Descargar preset completo (el activo)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download full preset (the active one)"
+          }
+        }
+      }
+    },
+    "Desconectado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnected"
+          }
+        }
+      }
+    },
+    "Desconectar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnect"
+          }
+        }
+      }
+    },
+    "Desde Archivos…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From Files…"
+          }
+        }
+      }
+    },
+    "Desde Mis presets…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From My presets…"
+          }
+        }
+      }
+    },
+    "Desenfoque" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blur"
+          }
+        }
+      }
+    },
+    "Después del amp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After the amp"
+          }
+        }
+      }
+    },
+    "Diagnóstico" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnostics"
+          }
+        }
+      }
+    },
+    "Dinámico" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dynamic"
+          }
+        }
+      }
+    },
+    "Dispositivos MIDI" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIDI devices"
+          }
+        }
+      }
+    },
+    "Driver" : {
+
+    },
+    "Editar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        }
+      }
+    },
+    "Editar setlists…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit setlists…"
+          }
+        }
+      }
+    },
+    "Efectos" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effects"
+          }
+        }
+      }
+    },
+    "El driver no está abierto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The driver isn't open"
+          }
+        }
+      }
+    },
+    "El driver solo se ejecuta mientras el pedal está conectado. Si lo apagas en Ajustes, la app dejará de ver el pedal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The driver only runs while the pedal is connected. If you turn it off in Settings, the app won't see the pedal anymore."
+          }
+        }
+      }
+    },
+    "El formato del preset no es el esperado; no se cambió nada." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The preset format isn't what was expected; nothing was changed."
+          }
+        }
+      }
+    },
+    "El formato del preset no es el esperado; no se guardó nada." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The preset format isn't what was expected; nothing was saved."
+          }
+        }
+      }
+    },
+    "El pedal devolvió otro preset (%@); no se cambió nada." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal returned a different preset (%@); nothing was changed."
+          }
+        }
+      }
+    },
+    "El pedal devolvió otro preset; no se guardó nada." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal returned a different preset; nothing was saved."
+          }
+        }
+      }
+    },
+    "El pedal guardó “%@”. Revisa el preset." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal saved “%@”. Check the preset."
+          }
+        }
+      }
+    },
+    "El pedal no está listo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal isn't ready."
+          }
+        }
+      }
+    },
+    "El pedal no informa qué amplificador usa cada preset." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal doesn't report which amp each preset uses."
+          }
+        }
+      }
+    },
+    "El pedal no respondió al leer el preset." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal didn't respond while reading the preset."
+          }
+        }
+      }
+    },
+    "El pedal no respondió; intenta de nuevo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal didn't respond; try again."
+          }
+        }
+      }
+    },
+    "El pedal no respondió. Revisa la conexión e intenta de nuevo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal didn't respond. Check the connection and try again."
+          }
+        }
+      }
+    },
+    "El pedal tiene “%@” en esa posición. Revisa el preset." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The pedal has “%@” in that slot. Check the preset."
+          }
+        }
+      }
+    },
+    "Elegir de Mis presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose from My presets"
+          }
+        }
+      }
+    },
+    "Elegir el amp de este preset" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose this preset's amp"
+          }
+        }
+      }
+    },
+    "Elegir imagen…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose image…"
+          }
+        }
+      }
+    },
+    "Elegir preset" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose preset"
+          }
+        }
+      }
+    },
+    "Elige dos posiciones distintas." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose two different slots."
+          }
+        }
+      }
+    },
+    "Elige presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose presets"
+          }
+        }
+      }
+    },
+    "Elige uno, un banco o todos y se guardan en este iPad. Solo lee del pedal, no cambia nada. Desde “Mis presets” puedes compartirlos o copiarlos a otra ubicación." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose one, a bank or all of them and they're saved on this iPad. It only reads from the pedal and changes nothing. From “My presets” you can share them or copy them elsewhere."
+          }
+        }
+      }
+    },
+    "Encender/apagar %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn %@ on/off"
+          }
+        }
+      }
+    },
+    "Encendido" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On"
+          }
+        }
+      }
+    },
+    "Entrar sin pedal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue without pedal"
+          }
+        }
+      }
+    },
+    "Entre 40 y 240" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Between 40 and 240"
+          }
+        }
+      }
+    },
+    "Esa carpeta no tiene presets de TONE." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That folder has no TONE presets."
+          }
+        }
+      }
+    },
+    "Escenario" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stage"
+          }
+        }
+      }
+    },
+    "escritura" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "write"
+          }
+        }
+      }
+    },
+    "Ese archivo no es un preset de TONE." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That file isn't a TONE preset."
+          }
+        }
+      }
+    },
+    "Ese archivo no tiene el formato de preset completo; no se cargó nada." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That file isn't a full preset; nothing was loaded."
+          }
+        }
+      }
+    },
+    "Estado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        }
+      }
+    },
+    "Este banco" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This bank"
+          }
+        }
+      }
+    },
+    "Estudio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Studio"
+          }
+        }
+      }
+    },
+    "Exportar…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export…"
+          }
+        }
+      }
+    },
+    "Expresión %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expression %@"
+          }
+        }
+      }
+    },
+    "Falló la %@ con el driver (%@)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The driver %@ failed (%@)"
+          }
+        }
+      }
+    },
+    "Fijar tempo al llegar a esta canción" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set the tempo when this song starts"
+          }
+        }
+      }
+    },
+    "Fin" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        }
+      }
+    },
+    "Fondo del modo Editar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit mode background"
+          }
+        }
+      }
+    },
+    "Fondo del modo Live" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live mode background"
+          }
+        }
+      }
+    },
+    "Funciona con iRig BlueBoard y cualquier pedal MIDI. 1) Conéctalo con “Conectar pedal Bluetooth…”. 2) En cada fila toca “Aprender” y pisa el botón del pedal. 3) Elige qué hace. Desliza una fila para borrarla." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Works with iRig BlueBoard and any MIDI controller. 1) Connect it with “Connect Bluetooth pedal…”. 2) In each row tap “Learn” and press the pedal button. 3) Choose what it does. Swipe a row to delete it."
+          }
+        }
+      }
+    },
+    "Fuzz plata" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silver Fuzz"
+          }
+        }
+      }
+    },
+    "Fuzz rojo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red Fuzz"
+          }
+        }
+      }
+    },
+    "Gabinete" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cabinet"
+          }
+        }
+      }
+    },
+    "Gabinete VIR" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VIR cabinet"
+          }
+        }
+      }
+    },
+    "Gain del amp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amp gain"
+          }
+        }
+      }
+    },
+    "github.com/oscargm10176/tonexIOSCONTROLLER" : {
+
+    },
+    "Globales del pedal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedal globals"
+          }
+        }
+      }
+    },
+    "Guarda presets del pedal (mantén presionado uno en la lista › “Guardar preset…”), o trae archivos .tonepreset desde Archivos, AirDrop o arrastrándolos aquí." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save presets from the pedal (press and hold one in the list › “Save preset…”), or bring in .tonepreset files from Files, AirDrop or by dragging them here."
+          }
+        }
+      }
+    },
+    "Guardado en “%@”." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved to “%@”."
+          }
+        }
+      }
+    },
+    "Guardado en Mis presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved to My presets"
+          }
+        }
+      }
+    },
+    "Guardar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "Guardar %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save %@"
+          }
+        }
+      }
+    },
+    "Guardar en Archivos" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to Files"
+          }
+        }
+      }
+    },
+    "Guardar en Archivos…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to Files…"
+          }
+        }
+      }
+    },
+    "Guardar en el pedal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to the pedal"
+          }
+        }
+      }
+    },
+    "Guardar en iCloud Drive / Archivos…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to iCloud Drive / Files…"
+          }
+        }
+      }
+    },
+    "Guardar en Mis presets…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to My presets…"
+          }
+        }
+      }
+    },
+    "Guardar presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save presets"
+          }
+        }
+      }
+    },
+    "Guardar presets…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save presets…"
+          }
+        }
+      }
+    },
+    "Hablando con el pedal…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talking to the pedal…"
+          }
+        }
+      }
+    },
+    "Ibanez azul" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue Ibanez"
+          }
+        }
+      }
+    },
+    "Ibanez azul oscuro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark blue Ibanez"
+          }
+        }
+      }
+    },
+    "Ibanez rojo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red Ibanez"
+          }
+        }
+      }
+    },
+    "Ibanez verde" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green Ibanez"
+          }
+        }
+      }
+    },
+    "Idioma" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        }
+      }
+    },
+    "Idioma del sistema" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System language"
+          }
+        }
+      }
+    },
+    "Imagen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image"
+          }
+        }
+      }
+    },
+    "Imagen de fondo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background image"
+          }
+        }
+      }
+    },
+    "Imagen elegida" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chosen image"
+          }
+        }
+      }
+    },
+    "Imagen para %@ · %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image for %@ · %@"
+          }
+        }
+      }
+    },
+    "Imagen sugerida" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggested image"
+          }
+        }
+      }
+    },
+    "Importar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        }
+      }
+    },
+    "Importar aquí" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import here"
+          }
+        }
+      }
+    },
+    "Importar archivos…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import files…"
+          }
+        }
+      }
+    },
+    "Inicio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
+    "Intercambiar %@ con…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swap %@ with…"
+          }
+        }
+      }
+    },
+    "Intercambiar con…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swap with…"
+          }
+        }
+      }
+    },
+    "Invertir" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invert"
+          }
+        }
+      }
+    },
+    "lectura" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "read"
+          }
+        }
+      }
+    },
+    "Leyendo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading"
+          }
+        }
+      }
+    },
+    "Leyendo del pedal %@ de %@…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading from the pedal %@ of %@…"
+          }
+        }
+      }
+    },
+    "Leyendo presets %@/%@…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading presets %@/%@…"
+          }
+        }
+      }
+    },
+    "Leyendo tus presets…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading your presets…"
+          }
+        }
+      }
+    },
+    "Listo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "Listo: “%@” quedó en %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done: “%@” is now in %@."
+          }
+        }
+      }
+    },
+    "Listo: el preset ahora se llama “%@” en el pedal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done: the preset is now called “%@” on the pedal."
+          }
+        }
+      }
+    },
+    "Listo: guardado en el pedal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done: saved to the pedal."
+          }
+        }
+      }
+    },
+    "Listo: se intercambiaron %@ y %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done: %@ and %@ were swapped."
+          }
+        }
+      }
+    },
+    "Los cambios de perillas y efectos de este preset quedan guardados en el pedal. Antes se guarda un respaldo en “Mis presets”." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This preset's knob and effect changes are saved to the pedal. A backup goes to “My presets” first."
+          }
+        }
+      }
+    },
+    "Madera" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wood"
+          }
+        }
+      }
+    },
+    "Mantén presionado para desbloquear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press and hold to unlock"
+          }
+        }
+      }
+    },
+    "Mark madera" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wood Mark"
+          }
+        }
+      }
+    },
+    "Mi foto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My photo"
+          }
+        }
+      }
+    },
+    "Mic 1" : {
+
+    },
+    "Mic 2" : {
+
+    },
+    "Mis presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My presets"
+          }
+        }
+      }
+    },
+    "Mix de la reverb" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reverb mix"
+          }
+        }
+      }
+    },
+    "Mix del delay" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delay mix"
+          }
+        }
+      }
+    },
+    "Modelo USB 0x%@ aún no soportado (solo Tonex Pedal)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB model 0x%@ not supported yet (Tonex Pedal only)"
+          }
+        }
+      }
+    },
+    "Moderno blanco" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "White modern"
+          }
+        }
+      }
+    },
+    "Modo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode"
+          }
+        }
+      }
+    },
+    "Modulación" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modulation"
+          }
+        }
+      }
+    },
+    "Mueve el pedal de expresión…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move the expression pedal…"
+          }
+        }
+      }
+    },
+    "MXR amarillo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yellow MXR"
+          }
+        }
+      }
+    },
+    "MXR blanco" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "White MXR"
+          }
+        }
+      }
+    },
+    "MXR doble negro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black MXR double"
+          }
+        }
+      }
+    },
+    "MXR doble rojo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red MXR double"
+          }
+        }
+      }
+    },
+    "MXR dorado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gold MXR"
+          }
+        }
+      }
+    },
+    "MXR naranja" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange MXR"
+          }
+        }
+      }
+    },
+    "MXR negro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black MXR"
+          }
+        }
+      }
+    },
+    "MXR verde" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green MXR"
+          }
+        }
+      }
+    },
+    "Ninguno" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "No encuentro el driver del Tonex" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't find the Tonex driver"
+          }
+        }
+      }
+    },
+    "No está afiliado a IK Multimedia. TONEX es marca registrada de IK Multimedia Production Srl." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not affiliated with IK Multimedia. TONEX is a registered trademark of IK Multimedia Production Srl."
+          }
+        }
+      }
+    },
+    "No había nada que importar." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There was nothing to import."
+          }
+        }
+      }
+    },
+    "No pude abrir el driver (%@)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open the driver (%@)"
+          }
+        }
+      }
+    },
+    "No pude abrir ese archivo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open that file."
+          }
+        }
+      }
+    },
+    "No pude crear la carpeta del respaldo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't create the backup folder."
+          }
+        }
+      }
+    },
+    "No pude leer las dos posiciones; no se cambió nada." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't read both slots; nothing was changed."
+          }
+        }
+      }
+    },
+    "No pude preparar el archivo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't prepare the file."
+          }
+        }
+      }
+    },
+    "No respondieron: " : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Didn't respond: "
+          }
+        }
+      }
+    },
+    "No se guardó: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not saved: %@"
+          }
+        }
+      }
+    },
+    "No se pudo abrir esa imagen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open that image."
+          }
+        }
+      }
+    },
+    "No se pudo guardar la imagen." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't save the image."
+          }
+        }
+      }
+    },
+    "Nombre" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "Nombre (p. ej. Show viernes)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name (e.g. Friday show)"
+          }
+        }
+      }
+    },
+    "Nota %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note %@"
+          }
+        }
+      }
+    },
+    "Nuevo setlist" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New setlist"
+          }
+        }
+      }
+    },
+    "OFF" : {
+
+    },
+    "OK" : {
+
+    },
+    "ON" : {
+
+    },
+    "Oscurecer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Darken"
+          }
+        }
+      }
+    },
+    "Oscurecer un poco ayuda a leer el nombre del preset con las luces del escenario." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Darkening it a little helps you read the preset name under stage lights."
+          }
+        }
+      }
+    },
+    "Pantalla bloqueada" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screen locked"
+          }
+        }
+      }
+    },
+    "Pedal" : {
+
+    },
+    "Pedal Bluetooth" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bluetooth pedal"
+          }
+        }
+      }
+    },
+    "Pedal de pie (Bluetooth MIDI)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foot controller (Bluetooth MIDI)"
+          }
+        }
+      }
+    },
+    "Pedales" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedals"
+          }
+        }
+      }
+    },
+    "Pedales de expresión" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expression pedals"
+          }
+        }
+      }
+    },
+    "Pisa el botón del pedal…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press the pedal button…"
+          }
+        }
+      }
+    },
+    "Plexi blanco" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "White Plexi"
+          }
+        }
+      }
+    },
+    "Plexi negro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black Plexi"
+          }
+        }
+      }
+    },
+    "Posición" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position"
+          }
+        }
+      }
+    },
+    "Post" : {
+
+    },
+    "POST" : {
+
+    },
+    "Pre" : {
+
+    },
+    "PRE" : {
+
+    },
+    "Preset" : {
+
+    },
+    "Preset %@ del banco" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preset %@ of the bank"
+          }
+        }
+      }
+    },
+    "Preset actual" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current preset"
+          }
+        }
+      }
+    },
+    "Preset anterior" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous preset"
+          }
+        }
+      }
+    },
+    "Preset completo (investigación)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full preset (research)"
+          }
+        }
+      }
+    },
+    "Preset para la canción" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preset for the song"
+          }
+        }
+      }
+    },
+    "Preset siguiente" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next preset"
+          }
+        }
+      }
+    },
+    "Presets" : {
+
+    },
+    "Probar %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test %@"
+          }
+        }
+      }
+    },
+    "Quitar botón asignado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove assigned button"
+          }
+        }
+      }
+    },
+    "Quitar imagen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove image"
+          }
+        }
+      }
+    },
+    "Recibido" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Received"
+          }
+        }
+      }
+    },
+    "Reemplazar %@ · %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace %@ · %@"
+          }
+        }
+      }
+    },
+    "Releer preset y globales" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reload preset and globals"
+          }
+        }
+      }
+    },
+    "Renombrar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
+          }
+        }
+      }
+    },
+    "Renombrar en el pedal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename on the pedal"
+          }
+        }
+      }
+    },
+    "Renombrar en el pedal…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename on the pedal…"
+          }
+        }
+      }
+    },
+    "Resonancia" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resonance"
+          }
+        }
+      }
+    },
+    "Respaldando lo actual" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backing up current"
+          }
+        }
+      }
+    },
+    "Respaldar lo actual y restaurar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back up current and restore"
+          }
+        }
+      }
+    },
+    "Respaldar los %@ presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back up all %@ presets"
+          }
+        }
+      }
+    },
+    "Respaldo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup"
+          }
+        }
+      }
+    },
+    "Respaldo cancelado. Lo leído hasta ahora (%@ presets) quedó en la carpeta." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup cancelled. What was read so far (%@ presets) is in the folder."
+          }
+        }
+      }
+    },
+    "Respaldo completo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full backup"
+          }
+        }
+      }
+    },
+    "Respaldo completo del pedal…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full pedal backup…"
+          }
+        }
+      }
+    },
+    "Respaldo de presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preset backup"
+          }
+        }
+      }
+    },
+    "Respaldo de TONE — %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TONE backup — %@"
+          }
+        }
+      }
+    },
+    "Respaldo listo: %@ presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup ready: %@ presets"
+          }
+        }
+      }
+    },
+    "Respaldos anteriores" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous backups"
+          }
+        }
+      }
+    },
+    "Restauración detenida: se escribieron %@ de %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore stopped: %@ of %@ were written."
+          }
+        }
+      }
+    },
+    "Restaurados: %@ presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restored: %@ presets"
+          }
+        }
+      }
+    },
+    "Restaurando" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restoring"
+          }
+        }
+      }
+    },
+    "Restaurar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
+    "Restaurar desde iCloud / Archivos…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore from iCloud / Files…"
+          }
+        }
+      }
+    },
+    "Restaurar sin respaldar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore without backing up"
+          }
+        }
+      }
+    },
+    "Se borran solo de este iPad; el pedal no cambia." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They're only deleted from this iPad; the pedal doesn't change."
+          }
+        }
+      }
+    },
+    "Se carga el preset completo, con su Tone Model. Lo que hay ahora en esa posición se guarda antes en “Mis presets”." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The full preset is loaded, including its Tone Model. What's in that slot now is saved to “My presets” first."
+          }
+        }
+      }
+    },
+    "Se cortó la conexión: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection lost: %@"
+          }
+        }
+      }
+    },
+    "Se envió el nombre pero no pude confirmarlo. Revisa el pedal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The name was sent but couldn't be confirmed. Check the pedal."
+          }
+        }
+      }
+    },
+    "Se envió, pero no pude confirmarlo. Revisa el pedal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It was sent, but couldn't be confirmed. Check the pedal."
+          }
+        }
+      }
+    },
+    "Se guarda directo en el pedal. Antes se hace un respaldo en “Mis presets”. Máximo %@ caracteres, sin acentos ni ñ. Si es el preset que suena, también se guardan los cambios de perillas que tengas." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's saved straight to the pedal. A backup goes to “My presets” first. Up to %@ characters, no accents. If it's the preset that's playing, your knob changes are saved too."
+          }
+        }
+      }
+    },
+    "Se guardan en este iPad, en “Mis presets” (también en Archivos › En mi iPad › TONE › Presets). Incluye nombre, valores y el Tone Model en crudo. Leer cada preset tarda alrededor de un segundo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They're saved on this iPad, in “My presets” (also in Files › On My iPad › TONE › Presets). Includes the name, values and the raw Tone Model. Reading each preset takes about a second."
+          }
+        }
+      }
+    },
+    "Se importaron %@ presets." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported %@ presets."
+          }
+        }
+      }
+    },
+    "Se importó “%@”." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported “%@”."
+          }
+        }
+      }
+    },
+    "Se reemplaza “%@” por el preset completo, con su Tone Model. Lo de ahora se guarda antes en “Mis presets”." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” will be replaced with the full preset, including its Tone Model. The current one is saved to “My presets” first."
+          }
+        }
+      }
+    },
+    "Se reintenta solo en unos segundos. Si sigue, desconecta y vuelve a conectar el pedal." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It retries on its own in a few seconds. If it keeps happening, unplug and reconnect the pedal."
+          }
+        }
+      }
+    },
+    "Sección" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Section"
+          }
+        }
+      }
+    },
+    "Seleccionar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select"
+          }
+        }
+      }
+    },
+    "Setlists" : {
+
+    },
+    "Si algo falla, toca \"Copiar registro\" y pégalo en el chat." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If something fails, tap \"Copy log\" and paste it in the chat."
+          }
+        }
+      }
+    },
+    "Si ya está conectado, activa el driver en Ajustes › General › Drivers (o en los ajustes de esta app)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If it's already connected, enable the driver in Settings › General › Drivers (or in this app's settings)."
+          }
+        }
+      }
+    },
+    "Sigue: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next: %@"
+          }
+        }
+      }
+    },
+    "Siguiente preset" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next preset"
+          }
+        }
+      }
+    },
+    "Sin asignar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not assigned"
+          }
+        }
+      }
+    },
+    "Sin datos del pedal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pedal data"
+          }
+        }
+      }
+    },
+    "Sin eventos todavía" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No events yet"
+          }
+        }
+      }
+    },
+    "Sin gabinete" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cabinet"
+          }
+        }
+      }
+    },
+    "Sin gabinete: la salida va directa (para usar un IR o un gabinete real)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No cabinet: the output goes direct (to use an IR or a real cabinet)."
+          }
+        }
+      }
+    },
+    "Sin imagen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No image"
+          }
+        }
+      }
+    },
+    "Sin pedal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pedal"
+          }
+        }
+      }
+    },
+    "Sin preset" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No preset"
+          }
+        }
+      }
+    },
+    "Sin setlist (presets en orden)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No setlist (presets in order)"
+          }
+        }
+      }
+    },
+    "Solo lee del pedal, no cambia nada. Descarga dos presets que solo difieran en el amp y compártelos (AirDrop a la Mac o Guardar en Archivos). También aparecen en Archivos › En mi iPad › TONE › PresetDumps." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read-only, it changes nothing on the pedal. Download two presets that differ only in the amp and share them (AirDrop to the Mac or Save to Files). They also appear in Files › On My iPad › TONE › PresetDumps."
+          }
+        }
+      }
+    },
+    "Subdivisión" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subdivision"
+          }
+        }
+      }
+    },
+    "Subir tempo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raise tempo"
+          }
+        }
+      }
+    },
+    "Suelta aquí para importar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drop here to import"
+          }
+        }
+      }
+    },
+    "Sugerida · toca para cambiar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggested · tap to change"
+          }
+        }
+      }
+    },
+    "Sync al tempo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo sync"
+          }
+        }
+      }
+    },
+    "También puedes abrir un .tonepreset desde Archivos, AirDrop o Mail, o arrastrarlo a esta lista." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can also open a .tonepreset from Files, AirDrop or Mail, or drag it onto this list."
+          }
+        }
+      }
+    },
+    "También quedó una copia en “Mis presets”." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A copy was also saved to “My presets”."
+          }
+        }
+      }
+    },
+    "TAP" : {
+
+    },
+    "Tap tempo" : {
+
+    },
+    "Tempo" : {
+
+    },
+    "Tempo, %lld BPM" : {
+
+    },
+    "Tipo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "Título" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "Toca “Edit” para reordenar; desliza una canción para borrarla." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap “Edit” to reorder; swipe a song to delete it."
+          }
+        }
+      }
+    },
+    "Toca al ritmo para fijar el tempo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap in time to set the tempo"
+          }
+        }
+      }
+    },
+    "Toca para editar. Mantén presionado para encender o apagar." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to edit. Press and hold to turn on or off."
+          }
+        }
+      }
+    },
+    "Toca para escribir el tempo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to type the tempo"
+          }
+        }
+      }
+    },
+    "Todos" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "Todos los ajustes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All settings"
+          }
+        }
+      }
+    },
+    "TONE" : {
+
+    },
+    "Tonex Amp negro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Black Tonex Amp"
+          }
+        }
+      }
+    },
+    "Tonex Amp rojo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red Tonex Amp"
+          }
+        }
+      }
+    },
+    "Tus canciones en orden, cada una con su preset (y tempo, si quieres). En Live eliges el setlist y las flechas o el pedal pasan de canción en canción." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your songs in order, each with its preset (and tempo, if you want). In Live you pick the setlist and the arrows or the pedal move from song to song."
+          }
+        }
+      }
+    },
+    "Última" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last"
+          }
+        }
+      }
+    },
+    "Último botón recibido" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last button received"
+          }
+        }
+      }
+    },
+    "Usa de 1 a %@ letras sin acentos ni ñ (solo caracteres ASCII)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use 1 to %@ characters without accents (ASCII only)."
+          }
+        }
+      }
+    },
+    "Usando el gabinete capturado con el Tone Model." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Using the cabinet captured with the Tone Model."
+          }
+        }
+      }
+    },
+    "Usar una foto del iPad…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use a photo from the iPad…"
+          }
+        }
+      }
+    },
+    "Ver mis presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View my presets"
+          }
+        }
+      }
+    },
+    "Versión" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
+    "Vista previa" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview"
+          }
+        }
+      }
+    },
+    "Volumen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume"
+          }
+        }
+      }
+    },
+    "Volumen del amp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amp volume"
+          }
+        }
+      }
+    },
+    "Volumen master" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Master volume"
+          }
+        }
+      }
+    },
+    "Ya tenías “%@” (no se duplicó)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You already had “%@” (not duplicated)."
+          }
+        }
+      }
+    },
+    "Ya tenías %@ de ellos (no se duplicaron)." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You already had %@ of them (not duplicated)."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

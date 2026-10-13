@@ -269,7 +269,7 @@ struct SkinPickerSheet: View {
                 section("Amplificadores", AmpSkins.amps)
                 section("Pedales", AmpSkins.pedals)
             }
-            .navigationTitle(preset.map { "Imagen para \($0.label) · \($0.name)" } ?? "Imagen")
+            .navigationTitle(preset.map { trf("Imagen para %@ · %@", $0.label, $0.name) } ?? tr("Imagen"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -288,7 +288,7 @@ struct SkinPickerSheet: View {
     private func section(_ title: String, _ skins: [AmpSkin]) -> some View {
         let selected = store.displaySkin(for: presetID)?.index
         return VStack(alignment: .leading, spacing: 10) {
-            Text(title).font(.headline).padding(.horizontal)
+            Text(tr(title)).font(.headline).padding(.horizontal)
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(skins) { skin in
                     Button {
@@ -301,7 +301,7 @@ struct SkinPickerSheet: View {
                                 .interpolation(.high)
                                 .scaledToFit()
                                 .frame(height: 70)
-                            Text(skin.name).font(.caption).foregroundStyle(.secondary)
+                            Text(tr(skin.name)).font(.caption).foregroundStyle(.secondary)
                         }
                         .padding(10)
                         .frame(maxWidth: .infinity)
@@ -327,13 +327,13 @@ enum EffectBlock: String, CaseIterable, Hashable {
 
     var title: String {
         switch self {
-        case .gate: return "Noise gate"
-        case .comp: return "Compresor"
-        case .mod: return "Modulación"
+        case .gate: return tr("Noise gate")
+        case .comp: return tr("Compresor")
+        case .mod: return tr("Modulación")
         case .delay: return "Delay"
         case .eq: return "EQ"
-        case .amp: return "Amplificador"
-        case .cab: return "Gabinete"
+        case .amp: return tr("Amplificador")
+        case .cab: return tr("Gabinete")
         case .reverb: return "Reverb"
         }
     }
@@ -415,7 +415,7 @@ struct EffectsChainView: View {
                     }
                     .accessibilityElement()
                     .accessibilityLabel(block.title)
-                    .accessibilityValue(block.enableIndex.map { store.isOn($0) ? "Encendido" : "Apagado" } ?? "")
+                    .accessibilityValue(block.enableIndex.map { store.isOn($0) ? tr("Encendido") : tr("Apagado") } ?? "")
                     .accessibilityHint("Toca para editar. Mantén presionado para encender o apagar.")
                     .accessibilityAddTraits(isHighlighted(block) ? .isSelected : [])
                     .accessibilityAddTraits(.isButton)

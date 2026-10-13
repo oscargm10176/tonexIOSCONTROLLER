@@ -38,7 +38,7 @@ enum ModellerType: Int {
 
     var displayName: String {
         switch self {
-        case .none: return "Sin pedal"
+        case .none: return tr("Sin pedal")
         case .tonexOne: return "Tonex One"
         case .tonexPedal: return "Tonex Pedal"
         case .valetonGP5: return "Valeton GP5"

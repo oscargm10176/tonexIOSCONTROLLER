@@ -58,7 +58,7 @@ struct Knob: View {
             .gesture(drag(range: range, span: span, enabled: enabled))
             .onTapGesture(count: 2) { reset() }
 
-            Text(label)
+            Text(tr(label))
                 .font(.caption.weight(.semibold))
                 .textCase(.uppercase)
                 .foregroundStyle(.secondary)

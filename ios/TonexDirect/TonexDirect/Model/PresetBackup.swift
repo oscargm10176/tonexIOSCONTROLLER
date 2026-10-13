@@ -102,10 +102,18 @@ final class PresetLibrary {
 
         var summary: String {
             var parts: [String] = []
-            if !added.isEmpty { parts.append(added.count == 1 ? "Se importó “\(added[0].name)”." : "Se importaron \(added.count) presets.") }
-            if !duplicates.isEmpty { parts.append("Ya tenías \(duplicates.count == 1 ? "“\(duplicates[0])”" : "\(duplicates.count) de ellos") (no se duplicaron).") }
-            if !invalid.isEmpty { parts.append("\(invalid.count == 1 ? "“\(invalid[0])” no es" : "\(invalid.count) archivos no son") un preset de TONE.") }
-            return parts.isEmpty ? "No había nada que importar." : parts.joined(separator: " ")
+            if !added.isEmpty {
+                parts.append(added.count == 1 ? trf("Se importó “%@”.", added[0].name) : trf("Se importaron %@ presets.", added.count))
+            }
+            if !duplicates.isEmpty {
+                parts.append(duplicates.count == 1 ? trf("Ya tenías “%@” (no se duplicó).", duplicates[0])
+                                                   : trf("Ya tenías %@ de ellos (no se duplicaron).", duplicates.count))
+            }
+            if !invalid.isEmpty {
+                parts.append(invalid.count == 1 ? trf("“%@” no es un preset de TONE.", invalid[0])
+                                                : trf("%@ archivos no son presets de TONE.", invalid.count))
+            }
+            return parts.isEmpty ? tr("No había nada que importar.") : parts.joined(separator: " ")
         }
     }
 

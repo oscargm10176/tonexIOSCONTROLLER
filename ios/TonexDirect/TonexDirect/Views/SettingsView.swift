@@ -2,16 +2,34 @@ import SwiftUI
 import UIKit
 
 struct SettingsView: View {
+    static var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let v = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let b = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(v) (\(b))"
+    }
+
     @Environment(ControllerStore.self) private var store
     @Environment(\.openURL) private var openURL
     @State private var savingPresets = false
     @State private var showingLibrary = false
     @State private var showingFullBackup = false
+    @Environment(LanguageStore.self) private var language
     @Environment(PresetLibrary.self) private var library
 
     var body: some View {
         Group {
             Form {
+                Section {
+                    Picker(selection: Binding(get: { language.choice }, set: { language.set($0) })) {
+                        ForEach(AppLanguage.allCases) { l in Text(l.title).tag(l) }
+                    } label: {
+                        Label("Idioma", systemImage: "globe")
+                    }
+                } header: {
+                    Text("Idioma")
+                }
+
                 Section {
                     LabeledContent("Estado", value: store.state.label)
                     if let m = store.modeller {
@@ -61,6 +79,10 @@ struct SettingsView: View {
                 }
 
                 FootPedalSection()
+
+                ExpressionPedalSection()
+
+                SetlistsSection()
 
                 BackgroundSettings(.edit)
 
@@ -117,7 +139,7 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    LabeledContent("Recibido", value: "\(store.rxBytes) bytes · \(store.rxFrames) tramas · \(store.rxBadFrames) inválidas")
+                    LabeledContent("Recibido", value: trf("%@ bytes · %@ tramas · %@ inválidas", store.rxBytes, store.rxFrames, store.rxBadFrames))
                     HStack {
                         Button("Copiar registro") {
                             UIPasteboard.general.string = store.diagnostics.joined(separator: "\n")
@@ -141,11 +163,12 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Text("Protocolo USB basado en TonexOneController de Greg Smith (Apache 2.0).")
-                    Link("github.com/Builty/TonexOneController",
-                         destination: URL(string: "https://github.com/Builty/TonexOneController")!)
+                    LabeledContent("Versión", value: Self.appVersion)
+                    Link(destination: URL(string: "https://github.com/oscargm10176/tonexIOSCONTROLLER")!) {
+                        Label("github.com/oscargm10176/tonexIOSCONTROLLER", systemImage: "chevron.left.forwardslash.chevron.right")
+                    }
                 } header: {
-                    Text("Créditos")
+                    Text("Acerca de TONE")
                 } footer: {
                     Text("No está afiliado a IK Multimedia. TONEX es marca registrada de IK Multimedia Production Srl.")
                 }

@@ -12,11 +12,11 @@ enum ConnectionState: Equatable {
 
     var label: String {
         switch self {
-        case .idle: return "Desconectado"
-        case .waitingForPedal: return "Conecta el Tonex Pedal por USB-C"
-        case .connecting: return "Conectando con el pedal…"
-        case let .syncing(done, total): return "Leyendo presets \(done)/\(total)…"
-        case .ready: return "Conectado por USB"
+        case .idle: return tr("Desconectado")
+        case .waitingForPedal: return tr("Conecta el Tonex Pedal por USB-C")
+        case .connecting: return tr("Conectando con el pedal…")
+        case let .syncing(done, total): return trf("Leyendo presets %@/%@…", done, total)
+        case .ready: return tr("Conectado por USB")
         case .failed(let m): return m
         }
     }
@@ -409,7 +409,7 @@ final class ControllerStore {
         }
         guard status.productID == TonexPedal.productID || status.productID == 0 else {
             newLink.stop()
-            state = .failed("Modelo USB 0x\(String(status.productID, radix: 16)) aún no soportado (solo Tonex Pedal)")
+            state = .failed(trf("Modelo USB 0x%@ aún no soportado (solo Tonex Pedal)", String(status.productID, radix: 16)))
             return
         }
 
@@ -444,7 +444,7 @@ final class ControllerStore {
         note("Conexión perdida (#\(lostCount)) en fase \(phase): \(reason). Recibido: \(rxBytes) bytes, \(rxFrames) tramas, \(rxBadFrames) inválidas")
         teardown()
         guard wantsConnection else { state = .idle; return }
-        state = .failed("Se cortó la conexión: \(reason)")
+        state = .failed(trf("Se cortó la conexión: %@", reason))
         retryNotBefore = Date().addingTimeInterval(3)
     }
 
@@ -769,28 +769,28 @@ extension ControllerStore {
     /// cambios de perillas que tengas también quedan guardados.
     func renamePreset(_ id: Int, to rawName: String) async -> RenameOutcome {
         let name = rawName.trimmingCharacters(in: .whitespaces)
-        guard phase == .ready, presets.indices.contains(id) else { return .failed("El pedal no está listo.") }
+        guard phase == .ready, presets.indices.contains(id) else { return .failed(tr("El pedal no está listo.")) }
 
         let isCurrent = id == currentPreset
         guard let raw = await readFullPreset(id, editBuffer: isCurrent),
               let body = TonexPedal.fullPresetBody(raw) else {
-            return .failed("El pedal no respondió al leer el preset.")
+            return .failed(tr("El pedal no respondió al leer el preset."))
         }
         // Que el bloque leído sea de verdad este preset.
         let idxAt = 4
         let readIndex = body[idxAt] == 0x80 && body.count > idxAt + 1 ? Int(body[idxAt + 1]) : Int(body[idxAt])
-        guard readIndex == id else { return .failed("El pedal devolvió otro preset (\(readIndex + startPreset)); no se cambió nada.") }
+        guard readIndex == id else { return .failed(trf("El pedal devolvió otro preset (%@); no se cambió nada.", readIndex + startPreset)) }
 
         let newBody: [UInt8]
         do {
             newBody = try TonexPedal.renamedBody(body, to: name)
         } catch TonexPedal.RenameError.invalidName {
-            return .failed("Usa de 1 a \(TonexPedal.nameLength) letras sin acentos ni ñ (solo caracteres ASCII).")
+            return .failed(trf("Usa de 1 a %@ letras sin acentos ni ñ (solo caracteres ASCII).", TonexPedal.nameLength))
         } catch TonexPedal.RenameError.unknownLayout(let why) {
             note("Renombrar cancelado, formato inesperado (\(isCurrent ? "búfer" : "guardado"), \(raw.count) bytes): \(why)")
-            return .failed("El formato del preset no es el esperado; no se cambió nada.\n\n\(why)")
+            return .failed(tr("El formato del preset no es el esperado; no se cambió nada.") + "\n\n" + why)
         } catch {
-            return .failed("El formato del preset no es el esperado; no se cambió nada.")
+            return .failed(tr("El formato del preset no es el esperado; no se cambió nada."))
         }
 
         note("Renombrando preset \(id + startPreset) a “\(name)” (\(newBody.count) bytes)")
@@ -800,11 +800,11 @@ extension ControllerStore {
         // Confirmar leyendo lo que quedó guardado.
         guard let check = await readFullPreset(id),
               let saved = TonexPedal.fullPresetBody(check) else {
-            return .failed("Se envió el nombre pero no pude confirmarlo. Revisa el pedal.")
+            return .failed(tr("Se envió el nombre pero no pude confirmarlo. Revisa el pedal."))
         }
         let stored = TonexPedal.parsePresetDetails(saved).name ?? ""
         guard stored == name else {
-            return .failed("El pedal guardó “\(stored)”. Revisa el preset.")
+            return .failed(trf("El pedal guardó “%@”. Revisa el preset.", stored))
         }
         presets[id].name = name
         saveNameCache()
@@ -821,11 +821,11 @@ extension ControllerStore {
         send(TonexPedal.writePreset(body: body))
         try? await Task.sleep(for: .milliseconds(700))
         guard let check = await readFullPreset(slot), let saved = TonexPedal.fullPresetBody(check) else {
-            return .failed("Se envió, pero no pude confirmarlo. Revisa el pedal.")
+            return .failed(tr("Se envió, pero no pude confirmarlo. Revisa el pedal."))
         }
         let stored = TonexPedal.parsePresetDetails(saved).name ?? ""
         if let expectName, stored != expectName {
-            return .failed("El pedal tiene “\(stored)” en esa posición. Revisa el preset.")
+            return .failed(trf("El pedal tiene “%@” en esa posición. Revisa el preset.", stored))
         }
         if presets.indices.contains(slot), !stored.isEmpty, presets[slot].name != stored {
             presets[slot].name = stored
@@ -837,25 +837,25 @@ extension ControllerStore {
 
     /// Guarda en el pedal lo que suena ahora (perillas y efectos), como el botón Save del Editor.
     func saveCurrentToPedal() async -> RenameOutcome {
-        guard phase == .ready, let c = currentPreset else { return .failed("El pedal no está listo.") }
+        guard phase == .ready, let c = currentPreset else { return .failed(tr("El pedal no está listo.")) }
         guard let raw = await readFullPreset(c, editBuffer: true), let body = TonexPedal.fullPresetBody(raw) else {
-            return .failed("El pedal no respondió al leer el preset.")
+            return .failed(tr("El pedal no respondió al leer el preset."))
         }
-        guard TonexPedal.slot(ofBody: body) == c else { return .failed("El pedal devolvió otro preset; no se guardó nada.") }
+        guard TonexPedal.slot(ofBody: body) == c else { return .failed(tr("El pedal devolvió otro preset; no se guardó nada.")) }
         let name = TonexPedal.parsePresetDetails(body).name ?? presets[c].name
         guard let out = try? TonexPedal.renamedBody(body, to: name) else {
-            return .failed("El formato del preset no es el esperado; no se guardó nada.")
+            return .failed(tr("El formato del preset no es el esperado; no se guardó nada."))
         }
         return await writeAndVerify(out, slot: c, expectName: name)
     }
 
     /// Carga un preset guardado (con su Tone Model) en una posición del pedal, reemplazando lo que haya.
     func loadPreset(_ saved: SavedPreset, into slot: Int) async -> RenameOutcome {
-        guard phase == .ready, presets.indices.contains(slot) else { return .failed("El pedal no está listo.") }
+        guard phase == .ready, presets.indices.contains(slot) else { return .failed(tr("El pedal no está listo.")) }
         guard let body = TonexPedal.fullPresetBody(Array(saved.raw)),
               let moved = try? TonexPedal.body(body, movedTo: slot),
               (try? TonexPedal.renamedBody(moved, to: saved.name)) != nil else {
-            return .failed("Ese archivo no tiene el formato de preset completo; no se cargó nada.")
+            return .failed(tr("Ese archivo no tiene el formato de preset completo; no se cargó nada."))
         }
         let result = await writeAndVerify(moved, slot: slot, expectName: saved.name)
         if result == .done, slot == currentPreset { send(TonexPedal.setPreset(slot)) }   // recargar lo que suena
@@ -864,12 +864,12 @@ extension ControllerStore {
 
     /// Intercambia dos posiciones leyendo ambas y escribiendo cada una en la otra.
     func swapPresets(_ a: Int, _ b: Int) async -> RenameOutcome {
-        guard a != b, presets.indices.contains(a), presets.indices.contains(b) else { return .failed("Elige dos posiciones distintas.") }
+        guard a != b, presets.indices.contains(a), presets.indices.contains(b) else { return .failed(tr("Elige dos posiciones distintas.")) }
         guard let ra = await readFullPreset(a), let ba = TonexPedal.fullPresetBody(ra),
               let rb = await readFullPreset(b), let bb = TonexPedal.fullPresetBody(rb),
               TonexPedal.slot(ofBody: ba) == a, TonexPedal.slot(ofBody: bb) == b,
               let toB = try? TonexPedal.body(ba, movedTo: b), let toA = try? TonexPedal.body(bb, movedTo: a) else {
-            return .failed("No pude leer las dos posiciones; no se cambió nada.")
+            return .failed(tr("No pude leer las dos posiciones; no se cambió nada."))
         }
         let nameA = TonexPedal.parsePresetDetails(ba).name
         let nameB = TonexPedal.parsePresetDetails(bb).name

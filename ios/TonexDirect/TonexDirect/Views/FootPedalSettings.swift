@@ -67,7 +67,7 @@ struct FootBindingRow: View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(binding.name).font(.body.weight(.semibold))
-                Text(isLearning ? "Pisa el botón del pedal…" : (binding.trigger?.label ?? "Sin asignar"))
+                Text(isLearning ? tr("Pisa el botón del pedal…") : (binding.trigger?.label ?? tr("Sin asignar")))
                     .font(.caption.monospaced())
                     .foregroundStyle(isLearning ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
             }
@@ -98,7 +98,7 @@ struct FootBindingRow: View {
                 Image(systemName: "play.fill")
             }
             .buttonStyle(.borderless)
-            .accessibilityLabel("Probar \(binding.action.title)")
+            .accessibilityLabel(trf("Probar %@", binding.action.title))
         }
         .contextMenu {
             if binding.trigger != nil {
@@ -114,4 +114,60 @@ struct BluetoothMIDIPairing: UIViewControllerRepresentable {
         CABTMIDICentralViewController()
     }
     func updateUIViewController(_ vc: CABTMIDICentralViewController, context: Context) {}
+}
+
+/// Pedales de expresión (CC continuo): volumen, gain o mix de delay/reverb.
+struct ExpressionPedalSection: View {
+    @Environment(FootController.self) private var foot
+
+    var body: some View {
+        Section {
+            ForEach(foot.expressions) { e in
+                ExpressionRow(binding: e)
+            }
+            .onDelete { idx in idx.map { foot.expressions[$0].id }.forEach(foot.removeExpression) }
+            Button { foot.addExpression() } label: {
+                Label("Agregar pedal de expresión", systemImage: "plus.circle")
+            }
+        } header: {
+            Text("Pedales de expresión")
+        } footer: {
+            Text("Conecta el pedal de expresión al BlueBoard, toca “Aprender” y muévelo de punta a punta. Si sube al revés, activa “Invertir”.")
+        }
+    }
+}
+
+struct ExpressionRow: View {
+    @Environment(FootController.self) private var foot
+    let binding: ExpressionBinding
+    private var isLearning: Bool { foot.learningExpression == binding.id }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(binding.name).font(.body.weight(.semibold))
+                Text(isLearning ? tr("Mueve el pedal de expresión…") : (binding.trigger?.label ?? tr("Sin asignar")))
+                    .font(.caption.monospaced())
+                    .foregroundStyle(isLearning ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+            }
+            .frame(minWidth: 150, alignment: .leading)
+            Spacer()
+            Menu {
+                ForEach(ExpressionTarget.allCases) { t in
+                    Button { foot.setExpression(binding.id, target: t) } label: { Label(t.title, systemImage: t.systemImage) }
+                }
+            } label: {
+                Label(binding.target.title, systemImage: binding.target.systemImage).font(.callout)
+            }
+            Toggle("Invertir", isOn: Binding(get: { binding.inverted },
+                                             set: { foot.setExpression(binding.id, inverted: $0) }))
+                .toggleStyle(.button)
+                .font(.callout)
+            Button(isLearning ? "Cancelar" : "Aprender") {
+                foot.learningExpression = isLearning ? nil : binding.id
+            }
+            .buttonStyle(.bordered)
+            .tint(isLearning ? .orange : nil)
+        }
+    }
 }

@@ -216,12 +216,12 @@ struct DropdownParam: View {
                 Button {
                     store.setValue(index, Double(i), immediate: true)
                 } label: {
-                    if i == current { Label(options[i], systemImage: "checkmark") } else { Text(options[i]) }
+                    if i == current { Label(tr(options[i]), systemImage: "checkmark") } else { Text(tr(options[i])) }
                 }
             }
         } label: {
             HStack(spacing: 10) {
-                Text(options[current]).font(.subheadline.weight(.semibold))
+                Text(tr(options[current])).font(.subheadline.weight(.semibold))
                 Image(systemName: "chevron.down").font(.caption.weight(.bold))
             }
             .foregroundStyle(.primary)
@@ -311,7 +311,7 @@ struct SegmentedParam: View {
             set: { store.setValue(index, Double($0), immediate: true) }
         )) {
             ForEach(options.indices, id: \.self) { i in
-                Text(options[i]).tag(i)
+                Text(tr(options[i])).tag(i)
             }
         }
         .pickerStyle(.segmented)
@@ -333,7 +333,7 @@ struct ToggleChip: View {
             UISelectionFeedbackGenerator().selectionChanged()
             store.setToggle(index, !on)
         } label: {
-            Label(label, systemImage: systemImage)
+            Label(tr(label), systemImage: systemImage)
                 .font(.footnote.weight(.semibold))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 7)
@@ -358,7 +358,7 @@ struct SubdivisionStepper: View {
             get: { Int(store.value(index).rounded()) },
             set: { store.setValue(index, Double($0), immediate: true) }
         ), in: Int(r.lowerBound)...Int(r.upperBound)) {
-            Text("\(title) \(Int(store.value(index).rounded()))")
+            Text("\(tr(title)) \(Int(store.value(index).rounded()))")
                 .font(.footnote.monospacedDigit())
         }
         .fixedSize()

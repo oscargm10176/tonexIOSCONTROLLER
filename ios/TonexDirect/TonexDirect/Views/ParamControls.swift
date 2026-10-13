@@ -25,7 +25,7 @@ struct ParamRow: View {
                 set: { store.setValue(spec.index, Double($0), immediate: true) }
             ), in: Int(r.lowerBound)...Int(r.upperBound)) {
                 HStack {
-                    Text(spec.label)
+                    Text(tr(spec.label))
                     Spacer()
                     Text("\(Int(store.value(spec.index).rounded()))")
                         .monospacedDigit()
@@ -48,7 +48,7 @@ struct ParamSlider: View {
         let value = store.value(index)
         VStack(alignment: .leading, spacing: 2) {
             HStack {
-                Text(label)
+                Text(tr(label))
                 Spacer()
                 Text(formatted(value))
                     .monospacedDigit()
@@ -103,7 +103,7 @@ struct ChoicePicker: View {
             set: { store.setValue(index, Double($0), immediate: true) }
         )) {
             ForEach(options.indices, id: \.self) { i in
-                Text(options[i]).tag(i)
+                Text(tr(options[i])).tag(i)
             }
         }
     }
@@ -117,7 +117,7 @@ struct EffectHeader: View {
 
     var body: some View {
         HStack {
-            Text(title)
+            Text(tr(title))
             Spacer()
             if let i = enableIndex {
                 Toggle(title, isOn: Binding(

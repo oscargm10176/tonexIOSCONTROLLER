@@ -107,7 +107,7 @@ struct BlockTile: View {
         .opacity(on ? 1 : 0.6)
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(block.title), \(store.blockSubtitle(block))")
+        .accessibilityLabel(block.title + ", " + store.blockSubtitle(block))
         .accessibilityValue(on ? "Encendido" : "Apagado")
         .accessibilityHint("Toca para editar. Mantén presionado para encender o apagar.")
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
