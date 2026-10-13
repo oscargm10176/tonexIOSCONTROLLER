@@ -2,28 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Se combina con el Info.plist que genera Xcode (GENERATE_INFOPLIST_FILE). -->
-	<key>UTExportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeIdentifier</key>
-			<string>com.nuttstudios.tone.preset</string>
-			<key>UTTypeDescription</key>
-			<string>Preset de TONE</string>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.json</string>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>tonepreset</string>
-				</array>
-			</dict>
-		</dict>
-	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -37,6 +15,27 @@
 			<array>
 				<string>com.nuttstudios.tone.preset</string>
 			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Preset de TONE</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.nuttstudios.tone.preset</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>tonepreset</string>
+				</array>
+			</dict>
 		</dict>
 	</array>
 </dict>
