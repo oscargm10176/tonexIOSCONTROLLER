@@ -1,0 +1,32 @@
+//
+//  TonexDataInterface.iig
+//  Se engancha a la interfaz CDC de datos (interfaz 1): lee el endpoint bulk IN de forma
+//  continua hacia TonexBridge y deja el bulk OUT listo para que la app escriba.
+//  También crea el user client con el que habla la app.
+//
+
+#ifndef TonexDataInterface_h
+#define TonexDataInterface_h
+
+#include <Availability.h>
+#include <DriverKit/IOService.iig>
+#include <USBDriverKit/IOUSBHostPipe.iig>
+
+class TonexDataInterface: public IOService
+{
+public:
+    virtual bool init() override;
+    virtual void free() override;
+
+    virtual kern_return_t Start(IOService * provider) override;
+    virtual kern_return_t Stop(IOService * provider) override;
+
+    virtual kern_return_t NewUserClient(uint32_t type, IOUserClient ** userClient) override;
+
+    virtual void ReadComplete(OSAction * action,
+                              IOReturn status,
+                              uint32_t actualByteCount,
+                              uint64_t completionTimestamp) TYPE(IOUSBHostPipe::CompleteAsyncIO);
+};
+
+#endif /* TonexDataInterface_h */

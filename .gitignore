@@ -1,0 +1,26 @@
+# Este repo solo guarda la app de iPad (ios/TonexDirect).
+# El firmware original del ESP32 (source/, Releases/, etc.) se queda local, sin subir.
+
+# Ignorar todo en la raíz...
+/*
+# ...excepto esto:
+!/.gitignore
+!/LICENSE
+!/ios/
+
+# Dentro de ios/, solo la app nueva (TonexRemote era la versión con ESP32)
+/ios/*
+!/ios/TonexDirect/
+
+# Copia duplicada del driver (el target usa ios/TonexDirect/TonexDriver)
+/ios/TonexDirect/DriverSource/
+
+# Xcode / macOS
+.DS_Store
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
