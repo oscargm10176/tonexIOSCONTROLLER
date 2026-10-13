@@ -3,21 +3,21 @@ import UIKit
 
 /// Secciones de la columna derecha.
 enum AppSection: String, CaseIterable, Identifiable {
-    case stage, effects, settings
+    case edit, live, settings
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .stage: return "Escenario"
-        case .effects: return "Efectos"
+        case .edit: return "Editar"
+        case .live: return "Live"
         case .settings: return "Ajustes"
         }
     }
 
     var systemImage: String {
         switch self {
-        case .stage: return "music.note.list"
-        case .effects: return "slider.horizontal.3"
+        case .edit: return "slider.horizontal.3"
+        case .live: return "music.mic"
         case .settings: return "gearshape"
         }
     }
@@ -28,6 +28,10 @@ enum AppSection: String, CaseIterable, Identifiable {
 struct ContentView: View {
     @Environment(ControllerStore.self) private var store
     @State private var columns: NavigationSplitViewVisibility = .all
+    /// El usuario eligió entrar sin esperar al pedal.
+    @State private var skippedLoading = false
+
+    private var showLoading: Bool { !store.hasBeenReady && !skippedLoading }
 
     var body: some View {
         @Bindable var store = store
@@ -43,8 +47,8 @@ struct ContentView: View {
                     }
                     Group {
                         switch store.section {
-                        case .stage: StageView()
-                        case .effects: EffectsView()
+                        case .edit: EditView()
+                        case .live: LiveView()
                         case .settings: SettingsView()
                         }
                     }
@@ -65,6 +69,22 @@ struct ContentView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+        // En Live se esconde la lista de presets para no tocarla por accidente.
+        .onAppear { columns = store.section == .live ? .detailOnly : .all }
+        .onChange(of: store.section) { _, section in
+            withAnimation(.snappy) { columns = section == .live ? .detailOnly : .all }
+        }
+        .sheet(isPresented: $store.showAdvanced) {
+            AdvancedSheet()
+        }
+        // Pantalla de carga hasta la primera sincronización completa.
+        .overlay {
+            if showLoading {
+                LoadingView(onSkip: { skippedLoading = true })
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.35), value: showLoading)
     }
 }
 
@@ -72,6 +92,7 @@ struct ContentView: View {
 struct PresetSidebar: View {
     @Environment(ControllerStore.self) private var store
     @State private var search = ""
+    @State private var pickingFor: Int?
 
     private var filtered: [Preset] {
         let q = search.trimmingCharacters(in: .whitespaces)
@@ -91,11 +112,22 @@ struct PresetSidebar: View {
                         store.selectPreset(preset.id)
                     }
                     .listRowBackground(preset.id == store.currentPreset ? Color.orange.opacity(0.22) : Color.clear)
+                    .contextMenu {
+                        Button { pickingFor = preset.id } label: { Label("Elegir imagen…", systemImage: "photo") }
+                        if store.chosenSkin(for: preset.id) != nil {
+                            Button(role: .destructive) { store.clearSkin(for: preset.id) } label: {
+                                Label("Quitar imagen", systemImage: "trash")
+                            }
+                        }
+                    }
                     .id(preset.id)
             }
             .listStyle(.plain)
             .searchable(text: $search, placement: .navigationBarDrawer(displayMode: .always), prompt: "Buscar preset")
             .navigationTitle("Presets")
+            .sheet(item: Binding(get: { pickingFor.map(PickTarget.init) }, set: { pickingFor = $0?.id })) { target in
+                SkinPickerSheet(presetID: target.id)
+            }
             .onChange(of: store.currentPreset) { _, new in
                 guard let new, search.isEmpty else { return }
                 withAnimation(.snappy) { proxy.scrollTo(new, anchor: .center) }
@@ -115,11 +147,7 @@ struct PresetRow: View {
                 .font(.callout.monospacedDigit().weight(.bold))
                 .foregroundStyle(isCurrent ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
                 .frame(width: 36, alignment: .trailing)
-            Image(AmpSkins.skin(store.skinIndex(for: preset.id)).asset)
-                .resizable()
-                .interpolation(.high)
-                .scaledToFit()
-                .frame(width: 72, height: 26)
+            SkinThumbnail(presetID: preset.id)
             Text(preset.name)
                 .font(isCurrent ? .body.weight(.semibold) : .body)
                 .lineLimit(1)
@@ -133,3 +161,6 @@ struct PresetRow: View {
         .padding(.vertical, 2)
     }
 }
+
+/// Envoltorio Identifiable para abrir la galería desde la lista.
+private struct PickTarget: Identifiable { let id: Int }

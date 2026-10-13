@@ -47,6 +47,38 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Button {
+                        store.downloadFullPreset()
+                    } label: {
+                        HStack {
+                            Label("Descargar preset completo (el activo)", systemImage: "square.and.arrow.down")
+                            Spacer()
+                            if store.dumpInProgress != nil { ProgressView() }
+                        }
+                    }
+                    .disabled(store.state != .ready || store.dumpInProgress != nil)
+
+                    ForEach(store.presetDumps, id: \.self) { url in
+                        HStack {
+                            Image(systemName: "doc.zipper")
+                            Text(url.lastPathComponent)
+                                .font(.caption.monospaced())
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                            Spacer()
+                            ShareLink(item: url) { Image(systemName: "square.and.arrow.up") }
+                        }
+                        .swipeActions {
+                            Button("Borrar", role: .destructive) { store.deleteDump(url) }
+                        }
+                    }
+                } header: {
+                    Text("Preset completo (investigación)")
+                } footer: {
+                    Text("Solo lee del pedal, no cambia nada. Descarga dos presets que solo difieran en el amp y compártelos (AirDrop a la Mac o Guardar en Archivos). También aparecen en Archivos › En mi iPad › TonexDirect › PresetDumps.")
+                }
+
+                Section {
                     LabeledContent("Recibido", value: "\(store.rxBytes) bytes · \(store.rxFrames) tramas · \(store.rxBadFrames) inválidas")
                     HStack {
                         Button("Copiar registro") {

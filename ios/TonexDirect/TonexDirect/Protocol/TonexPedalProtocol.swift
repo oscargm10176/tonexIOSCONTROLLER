@@ -71,6 +71,8 @@ enum TonexPedal {
         var presetIndex: Int?
         /// Valores de los parámetros 0..<paramLast, en orden. Puede venir incompleto o vacío.
         var params: [Float]
+        /// Cadenas ASCII legibles (≥ 4 letras) dentro del bloque, para diagnóstico.
+        var texts: [String] = []
     }
 
     /// Bloque de configuración global tal cual lo manda el pedal. Se guarda entero
@@ -131,7 +133,8 @@ enum TonexPedal {
         case hello
         case state(currentPreset: Int)
         case presetDetails(PresetDetails)
-        case presetDetailsFull
+        /// Preset completo (~30 KB): payload entero, sin interpretar.
+        case presetDetailsFull([UInt8])
         case paramChanged(index: Int, value: Float)
         case globalConfig(GlobalConfig)
         case unknown(type: Int)
@@ -171,7 +174,7 @@ enum TonexPedal {
         case 0x0304, 0x0204:
             return .presetDetails(parsePresetDetails(m))
         case 0x0303:
-            return .presetDetailsFull
+            return .presetDetailsFull(m)
         case 0x0206:
             if let cfg = parseGlobalConfig(m) { return .globalConfig(cfg) }
             return .unknown(type: type)
@@ -213,7 +216,23 @@ enum TonexPedal {
             }
             details.params = values
         }
+        details.texts = printableRuns(m)
         return details
+    }
+
+    /// Secuencias de caracteres imprimibles de 4 o más (como `strings`).
+    static func printableRuns(_ m: [UInt8], minLength: Int = 4) -> [String] {
+        var out: [String] = []
+        var run: [UInt8] = []
+        func flush() {
+            if run.count >= minLength { out.append(String(decoding: run, as: UTF8.self)) }
+            run.removeAll(keepingCapacity: true)
+        }
+        for b in m {
+            if b >= 0x20 && b < 0x7F { run.append(b) } else { flush() }
+        }
+        flush()
+        return out
     }
 
     private static func parseParamChanged(_ m: [UInt8]) -> (index: Int, value: Float)? {

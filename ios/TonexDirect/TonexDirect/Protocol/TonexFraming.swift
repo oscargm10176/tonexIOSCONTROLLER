@@ -79,9 +79,8 @@ enum TonexFraming {
 /// media trama o varias juntas; el firmware del ESP32 asume tramas completas por lectura,
 /// aquí no.
 struct TonexDeframer {
-    /// Las respuestas más grandes que pedimos (detalles cortos de preset, config global)
-    /// rondan 2–4 KB. El detalle "full" (~30 KB) no lo pedimos nunca.
-    var maxFrameSize = 16 * 1024
+    /// El preset completo ronda 30 KB (más el escape); se deja margen.
+    var maxFrameSize = 256 * 1024
 
     private var body: [UInt8] = []
     private var inFrame = false

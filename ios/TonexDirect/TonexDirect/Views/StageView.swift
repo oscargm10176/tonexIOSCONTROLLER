@@ -11,7 +11,8 @@ struct StageView: View {
             VStack(spacing: 16) {
                 PresetHeroCard()
                 if store.state == .ready {
-                    AmpPanel()
+                    BlockPanel(block: store.stageBlock)
+                        .animation(.snappy, value: store.stageBlock)
                 }
                 navigationButtons
             }

@@ -50,10 +50,16 @@ final class ControllerStore {
     private(set) var presets: [Preset] = []
     private(set) var currentPreset: Int?
     private(set) var params: [Int: ParamValue] = [:]
+    /// Ya terminó al menos una sincronización completa en esta sesión (oculta la pantalla de carga).
+    private(set) var hasBeenReady = false
 
     /// Sección visible en la columna derecha y bloque al que saltar desde la cadena de efectos.
-    var section: AppSection = .stage
+    var section: AppSection = .edit
+    /// Hoja con la edición completa (todos los parámetros).
+    var showAdvanced = false
     var focusedBlock: EffectBlock?
+    /// Bloque cuyo panel se ve en Escenario (se elige tocando la cadena).
+    var stageBlock: EffectBlock = .amp
 
     /// Registro de diagnóstico visible en Ajustes (últimas 300 líneas).
     private(set) var diagnostics: [String] = []
@@ -112,6 +118,96 @@ final class ControllerStore {
 
     func clearDiagnostics() { diagnostics.removeAll() }
 
+    // MARK: Descarga del preset completo (diagnóstico, solo lectura)
+
+    /// Archivos .bin descargados (Documents/PresetDumps), más reciente primero.
+    private(set) var presetDumps: [URL] = ControllerStore.listDumps()
+    private(set) var dumpInProgress: Int?
+
+    @ObservationIgnored private var dumpBuffer: [UInt8] = []
+    @ObservationIgnored private var dumpFrames = 0
+    @ObservationIgnored private var dumpFinishTask: Task<Void, Never>?
+    @ObservationIgnored private var dumpTimeoutTask: Task<Void, Never>?
+
+    private static var dumpsFolder: URL {
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return docs.appendingPathComponent("PresetDumps", isDirectory: true)
+    }
+
+    private static func listDumps() -> [URL] {
+        let urls = (try? FileManager.default.contentsOfDirectory(at: dumpsFolder, includingPropertiesForKeys: [.contentModificationDateKey])) ?? []
+        return urls.filter { $0.pathExtension == "bin" }.sorted { a, b in
+            let da = (try? a.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+            let db = (try? b.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+            return da > db
+        }
+    }
+
+    /// Pide al pedal el preset completo (~30 KB) del preset activo y lo guarda como archivo.
+    func downloadFullPreset() {
+        guard phase == .ready, dumpInProgress == nil, let c = currentPreset else { return }
+        dumpBuffer.removeAll()
+        dumpFrames = 0
+        dumpInProgress = c
+        note("Pidiendo preset completo \(c + startPreset)…")
+        send(TonexPedal.requestPresetDetails(c, full: true))
+        dumpTimeoutTask?.cancel()
+        dumpTimeoutTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(8))
+            guard let self, !Task.isCancelled, self.dumpInProgress != nil, self.dumpFrames == 0 else { return }
+            self.note("El pedal no respondió al pedido de preset completo")
+            self.dumpInProgress = nil
+        }
+    }
+
+    private func receiveFullPreset(_ payload: [UInt8]) {
+        guard dumpInProgress != nil else {
+            note("Llegó un preset completo sin pedirlo (\(payload.count) bytes); lo ignoro")
+            return
+        }
+        dumpBuffer.append(contentsOf: payload)
+        dumpFrames += 1
+        note("Preset completo: trama \(dumpFrames), \(payload.count) bytes")
+        // Por si llega en varias tramas: se guarda cuando pasan 800 ms sin más.
+        dumpFinishTask?.cancel()
+        dumpFinishTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard let self, !Task.isCancelled else { return }
+            self.finishDump()
+        }
+    }
+
+    private func finishDump() {
+        guard let c = dumpInProgress else { return }
+        dumpInProgress = nil
+        dumpTimeoutTask?.cancel()
+        let name = presets.indices.contains(c) ? presets[c].name : "preset"
+        let safe = name.map { $0.isLetter || $0.isNumber ? $0 : "_" }.reduce(into: "") { $0.append($1) }
+        let stamp = Self.fileStamp.string(from: Date())
+        let url = Self.dumpsFolder.appendingPathComponent("preset_\(c + startPreset)_\(safe)_\(stamp).bin")
+        do {
+            try FileManager.default.createDirectory(at: Self.dumpsFolder, withIntermediateDirectories: true)
+            try Data(dumpBuffer).write(to: url)
+            presetDumps = Self.listDumps()
+            let texts = TonexPedal.printableRuns(dumpBuffer, minLength: 5).prefix(25).joined(separator: " | ")
+            note("Guardado \(url.lastPathComponent) (\(dumpBuffer.count) bytes, \(dumpFrames) tramas). Textos: \(texts)")
+        } catch {
+            note("No pude guardar el preset completo: \(error.localizedDescription)")
+        }
+        dumpBuffer.removeAll()
+    }
+
+    func deleteDump(_ url: URL) {
+        try? FileManager.default.removeItem(at: url)
+        presetDumps = Self.listDumps()
+    }
+
+    private static let fileStamp: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyyMMdd-HHmmss"
+        return f
+    }()
+
     // MARK: Nombres guardados (la lista aparece al instante y se actualiza al sincronizar)
 
     private static let namesKey = "presetNames.tonexPedal"
@@ -127,7 +223,7 @@ final class ControllerStore {
     /// Ir a un bloque de efectos (desde la cadena).
     func focus(_ block: EffectBlock) {
         focusedBlock = block
-        section = .effects
+        showAdvanced = true
     }
 
     // MARK: Imagen de amp por preset (se guarda en el iPad, como SkinConfig en el ESP32)
@@ -137,7 +233,32 @@ final class ControllerStore {
     /// índice de preset → índice de `AmpSkins.all`
     private(set) var skinIndexes: [Int: Int] = ControllerStore.loadSkins()
 
+    /// Imagen sugerida por palabras clave (nombre del preset / textos internos).
+    private(set) var autoSkins: [Int: Int] = [:]
+
+    /// Lo que se muestra: la elección del usuario o, si no hay, la sugerencia.
+    func displaySkin(for preset: Int) -> (index: Int, isAuto: Bool)? {
+        if let c = skinIndexes[preset] { return (c, false) }
+        if let a = autoSkins[preset] { return (a, true) }
+        return nil
+    }
+
+    private func updateGuess(for preset: Int, texts: [String] = []) {
+        guard presets.indices.contains(preset) else { return }
+        // Primero los textos internos (si traen el modelo), luego el nombre.
+        let guess = (texts.isEmpty ? nil : AmpSkins.guess(texts)) ?? AmpSkins.guess([presets[preset].name])
+        if autoSkins[preset] != guess { autoSkins[preset] = guess }
+    }
+
+    /// Imagen elegida para el preset, o nil si nunca se eligió una.
+    func chosenSkin(for preset: Int) -> Int? { skinIndexes[preset] }
     func skinIndex(for preset: Int) -> Int { skinIndexes[preset] ?? 0 }
+
+    func clearSkin(for preset: Int) {
+        skinIndexes[preset] = nil
+        let stored = Dictionary(uniqueKeysWithValues: skinIndexes.map { (String($0.key), $0.value) })
+        UserDefaults.standard.set(stored, forKey: Self.skinsKey)
+    }
 
     func setSkin(_ skin: Int, for preset: Int) {
         guard AmpSkins.all.indices.contains(skin) else { return }
@@ -149,7 +270,9 @@ final class ControllerStore {
     /// Flechas de la tarjeta: sin dar la vuelta, igual que control_set_skin_next/previous.
     func stepSkin(_ delta: Int) {
         guard let c = currentPreset else { return }
-        let next = skinIndex(for: c) + delta
+        // Sin imagen elegida, la primera flecha arranca en la primera imagen.
+        guard let current = displaySkin(for: c)?.index else { setSkin(0, for: c); return }
+        let next = current + delta
         if AmpSkins.all.indices.contains(next) { setSkin(next, for: c) }
     }
 
@@ -283,6 +406,7 @@ final class ControllerStore {
                 let name = cached.indices.contains(i) && !cached[i].isEmpty ? cached[i] : "Preset \(i + startPreset)"
                 return Preset(id: i, number: i + startPreset, name: name)
             }
+            for i in presets.indices { updateGuess(for: i) }
         }
         params = TonexParamTable.defaults()
         globalConfig = nil
@@ -359,6 +483,7 @@ final class ControllerStore {
         saveNameCache()
         phase = .ready
         state = .ready
+        hasBeenReady = true
         UIApplication.shared.isIdleTimerDisabled = true   // pantalla encendida en escenario
     }
 
@@ -404,6 +529,7 @@ final class ControllerStore {
             case .names(let i):
                 if let name = details.name, !name.isEmpty, presets.indices.contains(i) {
                     presets[i].name = name
+                    updateGuess(for: i)
                 }
                 advanceNames(after: i)
             case .currentDetails:
@@ -423,13 +549,22 @@ final class ControllerStore {
             for (i, v) in config.paramValues { setFromPedal(i, Double(v)) }
             if phase == .globals { finishSync() }
 
-        case .presetDetailsFull, .unknown:
+        case .presetDetailsFull(let payload):
+            receiveFullPreset(payload)
+
+        case .unknown:
             break
         }
     }
 
+    @ObservationIgnored private var loggedTextsFor: Set<Int> = []
+
     private func apply(_ details: TonexPedal.PresetDetails) {
         lastDetailsAt = Date()
+        if let c = details.presetIndex ?? currentPreset, !loggedTextsFor.contains(c), !details.texts.isEmpty {
+            loggedTextsFor.insert(c)
+            note("Textos en el preset \(c + startPreset): " + details.texts.prefix(20).joined(separator: " | "))
+        }
         if let i = details.presetIndex, i < maxPresets { currentPreset = i }
         if let name = details.name, !name.isEmpty, let c = currentPreset, presets.indices.contains(c) {
             if presets[c].name != name {
@@ -437,6 +572,7 @@ final class ControllerStore {
                 if phase == .ready { saveNameCache() }
             }
         }
+        if let c = currentPreset { updateGuess(for: c, texts: details.texts) }
         for (i, v) in details.params.enumerated() { setFromPedal(i, Double(v)) }
     }
 
