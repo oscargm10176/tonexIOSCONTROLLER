@@ -31,7 +31,7 @@ struct LiveView: View {
             }
             .padding(16)
         }
-        .background(LiveBackgroundView())
+        .background(ScreenBackgroundView(.live))
     }
 
     // MARK: Preset al centro

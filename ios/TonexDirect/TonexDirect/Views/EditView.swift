@@ -29,6 +29,7 @@ struct EditView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
         }
+        .background(ScreenBackgroundView(.edit))
     }
 }
 

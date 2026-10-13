@@ -30,7 +30,9 @@ struct SettingsView: View {
 
                 FootPedalSection()
 
-                LiveBackgroundSettings()
+                BackgroundSettings(.edit)
+
+                BackgroundSettings(.live)
 
                 Section {
                     Button("Abrir los ajustes de la app") {

@@ -2,8 +2,8 @@ import SwiftUI
 import PhotosUI
 import UIKit
 
-/// Fondo del modo Live: una imagen con poco desenfoque y oscurecida para que se lea todo.
-/// Se puede apagar, elegir entre las incluidas o usar una foto propia del iPad.
+/// Fondos de Live y Editar: una imagen con poco desenfoque y oscurecida para que se lea todo.
+/// Se pueden apagar, elegir entre las incluidas o usar una foto propia del iPad.
 enum LiveBackgroundSource: String, CaseIterable, Identifiable {
     case studio, stage, custom
     var id: String { rawValue }
@@ -23,20 +23,24 @@ enum LiveBackgroundSource: String, CaseIterable, Identifiable {
     }
 }
 
-enum LiveBackgroundKeys {
-    static let enabled = "liveBg.enabled"
-    static let source = "liveBg.source"
-    static let blur = "liveBg.blur"
-    static let dim = "liveBg.dim"
-    static let customVersion = "liveBg.customVersion"
+/// Pantallas con fondo propio. Cada una guarda sus ajustes y su foto por separado.
+enum BackgroundScope: String {
+    case live, edit
+
+    var title: String { self == .live ? "Fondo del modo Live" : "Fondo del modo Editar" }
+    var defaultSource: LiveBackgroundSource { self == .live ? .studio : .stage }
+    var defaultDim: Double { self == .live ? 0.5 : 0.6 }
+    /// Prefijo de las claves (Live conserva las que ya tenía).
+    private var prefix: String { self == .live ? "liveBg" : "editBg" }
+    func key(_ name: String) -> String { "\(prefix).\(name)" }
 
     /// La foto propia se guarda en Documentos (reducida, para no gastar memoria).
-    static var customURL: URL {
+    var customURL: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("live_background.jpg")
+            .appendingPathComponent("\(rawValue)_background.jpg")
     }
 
-    static func saveCustom(_ image: UIImage) throws {
+    func saveCustom(_ image: UIImage) throws {
         let maxSide: CGFloat = 2400
         let scale = min(1, maxSide / max(image.size.width, image.size.height))
         let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
@@ -49,21 +53,29 @@ enum LiveBackgroundKeys {
         try data.write(to: customURL, options: .atomic)
     }
 
-    static func loadCustom() -> UIImage? {
-        UIImage(contentsOfFile: customURL.path)
-    }
+    func loadCustom() -> UIImage? { UIImage(contentsOfFile: customURL.path) }
 }
 
 /// La imagen de fondo ya compuesta (desenfoque + oscurecido). Negro si está apagada.
-struct LiveBackgroundView: View {
-    @AppStorage(LiveBackgroundKeys.enabled) private var enabled = true
-    @AppStorage(LiveBackgroundKeys.source) private var source = LiveBackgroundSource.studio.rawValue
-    @AppStorage(LiveBackgroundKeys.blur) private var blur = 4.0
-    @AppStorage(LiveBackgroundKeys.dim) private var dim = 0.5
-    @AppStorage(LiveBackgroundKeys.customVersion) private var customVersion = 0
+struct ScreenBackgroundView: View {
+    let scope: BackgroundScope
+    @AppStorage private var enabled: Bool
+    @AppStorage private var source: String
+    @AppStorage private var blur: Double
+    @AppStorage private var dim: Double
+    @AppStorage private var customVersion: Int
     @State private var custom: UIImage?
 
-    private var kind: LiveBackgroundSource { LiveBackgroundSource(rawValue: source) ?? .studio }
+    init(_ scope: BackgroundScope) {
+        self.scope = scope
+        _enabled = AppStorage(wrappedValue: true, scope.key("enabled"))
+        _source = AppStorage(wrappedValue: scope.defaultSource.rawValue, scope.key("source"))
+        _blur = AppStorage(wrappedValue: 4.0, scope.key("blur"))
+        _dim = AppStorage(wrappedValue: scope.defaultDim, scope.key("dim"))
+        _customVersion = AppStorage(wrappedValue: 0, scope.key("customVersion"))
+    }
+
+    private var kind: LiveBackgroundSource { LiveBackgroundSource(rawValue: source) ?? scope.defaultSource }
 
     var body: some View {
         Color.black
@@ -83,8 +95,9 @@ struct LiveBackgroundView: View {
             .ignoresSafeArea()
             .accessibilityHidden(true)
             .animation(.easeInOut(duration: 0.3), value: enabled)
-            .task(id: customVersion) { custom = kind == .custom ? LiveBackgroundKeys.loadCustom() : nil }
-            .onChange(of: source) { _, _ in custom = kind == .custom ? LiveBackgroundKeys.loadCustom() : nil }
+            .task(id: "\(customVersion)-\(source)") {
+                custom = kind == .custom ? scope.loadCustom() : nil
+            }
     }
 
     private var image: Image? {
@@ -93,23 +106,33 @@ struct LiveBackgroundView: View {
     }
 }
 
-/// Sección de Ajustes para el fondo de Live.
-struct LiveBackgroundSettings: View {
-    @AppStorage(LiveBackgroundKeys.enabled) private var enabled = true
-    @AppStorage(LiveBackgroundKeys.source) private var source = LiveBackgroundSource.studio.rawValue
-    @AppStorage(LiveBackgroundKeys.blur) private var blur = 4.0
-    @AppStorage(LiveBackgroundKeys.dim) private var dim = 0.5
-    @AppStorage(LiveBackgroundKeys.customVersion) private var customVersion = 0
+/// Sección de Ajustes para el fondo de una pantalla.
+struct BackgroundSettings: View {
+    let scope: BackgroundScope
+    @AppStorage private var enabled: Bool
+    @AppStorage private var source: String
+    @AppStorage private var blur: Double
+    @AppStorage private var dim: Double
+    @AppStorage private var customVersion: Int
     @State private var pick: PhotosPickerItem?
     @State private var error: String?
 
-    private var hasCustom: Bool { FileManager.default.fileExists(atPath: LiveBackgroundKeys.customURL.path) }
+    init(_ scope: BackgroundScope) {
+        self.scope = scope
+        _enabled = AppStorage(wrappedValue: true, scope.key("enabled"))
+        _source = AppStorage(wrappedValue: scope.defaultSource.rawValue, scope.key("source"))
+        _blur = AppStorage(wrappedValue: 4.0, scope.key("blur"))
+        _dim = AppStorage(wrappedValue: scope.defaultDim, scope.key("dim"))
+        _customVersion = AppStorage(wrappedValue: 0, scope.key("customVersion"))
+    }
+
+    private var hasCustom: Bool { FileManager.default.fileExists(atPath: scope.customURL.path) }
 
     var body: some View {
         Section {
             Toggle("Imagen de fondo", isOn: $enabled)
             if enabled {
-                LiveBackgroundView()
+                ScreenBackgroundView(scope)
                     .frame(height: 120)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(Text("Vista previa").font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.8)))
@@ -138,9 +161,11 @@ struct LiveBackgroundSettings: View {
                 }
             }
         } header: {
-            Text("Fondo del modo Live")
+            Text(scope.title)
         } footer: {
-            Text("Oscurecer un poco ayuda a leer el nombre del preset con las luces del escenario.")
+            Text(scope == .live
+                 ? "Oscurecer un poco ayuda a leer el nombre del preset con las luces del escenario."
+                 : "Con más oscuro se leen mejor las perillas y los valores.")
         }
         .onChange(of: pick) { _, item in
             guard let item else { return }
@@ -148,7 +173,7 @@ struct LiveBackgroundSettings: View {
                 do {
                     guard let data = try await item.loadTransferable(type: Data.self),
                           let image = UIImage(data: data) else { error = "No se pudo abrir esa imagen."; return }
-                    try LiveBackgroundKeys.saveCustom(image)
+                    try scope.saveCustom(image)
                     error = nil
                     source = LiveBackgroundSource.custom.rawValue
                     customVersion += 1
