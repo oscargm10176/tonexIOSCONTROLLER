@@ -1,6 +1,6 @@
 # Este repo solo guarda la app de iPad (ios/TonexDirect).
 # El firmware original del ESP32 (source/, Releases/, etc.) se queda local, sin subir.
-
+README.md
 # Ignorar todo en la raíz...
 /*
 # ...excepto esto:
