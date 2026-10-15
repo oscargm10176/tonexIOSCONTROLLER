@@ -1,5 +1,7 @@
 # TonexDirect (iPad, sin ESP32)
-
+<p align="center">
+  <img src="./video.gif" alt="Demo de TonexDirect" width="700">
+</p>
 App en SwiftUI para controlar un **Tonex Pedal** conectado **directamente por USB-C** a un iPad con chip M (M1 o posterior, incluido el M3). No necesita el ESP32 ni WiFi.
 
 ```
